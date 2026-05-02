@@ -43,10 +43,14 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rift|Enemy")
     float AttackCooldown;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rift|Enemy")
+    float ActivationDelay;
+
     UPROPERTY()
     TObjectPtr<ARiftRoomManager> OwningRoomManager;
 
     float LastAttackTime;
+    float SpawnTime;
 
     APawn* FindTargetPawn() const;
     void TryAttack(APawn* TargetPawn);

@@ -29,9 +29,11 @@ ARiftEnemyBase::ARiftEnemyBase()
 
     MoveSpeed = 360.0f;
     AttackRange = 175.0f;
-    AttackDamage = 8.0f;
-    AttackCooldown = 1.25f;
+    AttackDamage = 4.0f;
+    AttackCooldown = 1.75f;
+    ActivationDelay = 1.5f;
     LastAttackTime = -1000.0f;
+    SpawnTime = 0.0f;
 
     GetCharacterMovement()->MaxWalkSpeed = MoveSpeed;
 }
@@ -39,6 +41,11 @@ ARiftEnemyBase::ARiftEnemyBase()
 void ARiftEnemyBase::BeginPlay()
 {
     Super::BeginPlay();
+
+    if (UWorld* World = GetWorld())
+    {
+        SpawnTime = World->GetTimeSeconds();
+    }
 
     if (HealthComponent)
     {
@@ -51,6 +58,12 @@ void ARiftEnemyBase::Tick(float DeltaSeconds)
     Super::Tick(DeltaSeconds);
 
     if (!HasAuthority() || !HealthComponent || HealthComponent->IsDead())
+    {
+        return;
+    }
+
+    UWorld* World = GetWorld();
+    if (!World || World->GetTimeSeconds() - SpawnTime < ActivationDelay)
     {
         return;
     }

@@ -18,40 +18,48 @@ ARiftRoomManager::ARiftRoomManager()
     AliveEnemyCount = 0;
     CurrentRoomIndex = 0;
 
-    SpawnOffsets.Add(FVector(300.0f, 0.0f, 80.0f));
-    SpawnOffsets.Add(FVector(-300.0f, 200.0f, 80.0f));
-    SpawnOffsets.Add(FVector(-300.0f, -200.0f, 80.0f));
+    SpawnOffsets.Add(FVector(620.0f, 0.0f, 80.0f));
+    SpawnOffsets.Add(FVector(-620.0f, 320.0f, 80.0f));
+    SpawnOffsets.Add(FVector(-620.0f, -320.0f, 80.0f));
+    SpawnOffsets.Add(FVector(180.0f, 620.0f, 80.0f));
+    SpawnOffsets.Add(FVector(180.0f, -620.0f, 80.0f));
 
     FRiftRoomWaveConfig RoomOne;
-    RoomOne.EnemyCount = 3;
-    RoomOne.EnemyHealth = 75.0f;
+    RoomOne.EnemyCount = 2;
+    RoomOne.EnemyHealth = 55.0f;
+    RoomOne.EnemyMoveSpeed = 250.0f;
+    RoomOne.EnemyAttackDamage = 3.0f;
+    RoomOne.EnemyAttackCooldown = 2.0f;
     RoomWaves.Add(RoomOne);
 
     FRiftRoomWaveConfig RoomTwo;
-    RoomTwo.EnemyCount = 4;
-    RoomTwo.EnemyHealth = 90.0f;
+    RoomTwo.EnemyCount = 3;
+    RoomTwo.EnemyHealth = 70.0f;
+    RoomTwo.EnemyMoveSpeed = 285.0f;
+    RoomTwo.EnemyAttackDamage = 4.0f;
     RoomWaves.Add(RoomTwo);
 
     FRiftRoomWaveConfig RoomThree;
-    RoomThree.EnemyCount = 5;
-    RoomThree.EnemyHealth = 105.0f;
-    RoomThree.EnemyAttackDamage = 10.0f;
+    RoomThree.EnemyCount = 4;
+    RoomThree.EnemyHealth = 85.0f;
+    RoomThree.EnemyMoveSpeed = 310.0f;
+    RoomThree.EnemyAttackDamage = 5.0f;
     RoomWaves.Add(RoomThree);
 
     FRiftRoomWaveConfig EliteRoom;
-    EliteRoom.EnemyCount = 3;
-    EliteRoom.EnemyHealth = 170.0f;
-    EliteRoom.EnemyMoveSpeed = 410.0f;
-    EliteRoom.EnemyAttackDamage = 14.0f;
+    EliteRoom.EnemyCount = 2;
+    EliteRoom.EnemyHealth = 135.0f;
+    EliteRoom.EnemyMoveSpeed = 330.0f;
+    EliteRoom.EnemyAttackDamage = 7.0f;
     EliteRoom.EnemyVisualScale = FVector(0.7f, 0.7f, 1.0f);
     RoomWaves.Add(EliteRoom);
 
     FRiftRoomWaveConfig BossRoom;
     BossRoom.EnemyCount = 1;
-    BossRoom.EnemyHealth = 650.0f;
-    BossRoom.EnemyMoveSpeed = 300.0f;
-    BossRoom.EnemyAttackDamage = 22.0f;
-    BossRoom.EnemyAttackCooldown = 1.0f;
+    BossRoom.EnemyHealth = 420.0f;
+    BossRoom.EnemyMoveSpeed = 260.0f;
+    BossRoom.EnemyAttackDamage = 10.0f;
+    BossRoom.EnemyAttackCooldown = 1.4f;
     BossRoom.EnemyVisualScale = FVector(1.35f, 1.35f, 1.8f);
     BossRoom.bBossRoom = true;
     RoomWaves.Add(BossRoom);

@@ -71,6 +71,10 @@ void ARiftPlayerCharacter::BeginPlay()
     if (HealthComponent)
     {
         HealthComponent->OnDeath.AddDynamic(this, &ARiftPlayerCharacter::HandleDeath);
+        if (HasAuthority())
+        {
+            HealthComponent->SetMaxHealth(220.0f, true);
+        }
     }
 
     if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))

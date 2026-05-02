@@ -3,9 +3,13 @@
 #include "Combat/RiftHealthComponent.h"
 #include "Core/RiftGameState.h"
 #include "Core/RiftPlayerController.h"
+#include "Components/DirectionalLightComponent.h"
 #include "Components/PointLightComponent.h"
+#include "Components/SkyLightComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Engine/DirectionalLight.h"
 #include "Engine/PointLight.h"
+#include "Engine/SkyLight.h"
 #include "Engine/StaticMeshActor.h"
 #include "Rooms/RiftRoomManager.h"
 #include "UI/RiftCombatHUD.h"
@@ -91,8 +95,32 @@ void ARiftGameMode::SpawnRuntimeVisualFallback()
     UPointLightComponent* PointLightComponent = PointLight ? Cast<UPointLightComponent>(PointLight->GetLightComponent()) : nullptr;
     if (PointLightComponent)
     {
-        PointLightComponent->SetIntensity(80000.0f);
-        PointLightComponent->SetAttenuationRadius(3000.0f);
+        PointLightComponent->SetMobility(EComponentMobility::Movable);
+        PointLightComponent->SetIntensity(45000.0f);
+        PointLightComponent->SetAttenuationRadius(3600.0f);
+        PointLightComponent->SetCastShadows(false);
+    }
+
+    ADirectionalLight* DirectionalLight = World->SpawnActor<ADirectionalLight>(
+        FVector(0.0f, 0.0f, 1200.0f),
+        FRotator(-55.0f, -35.0f, 0.0f),
+        LightSpawnParams);
+    UDirectionalLightComponent* DirectionalLightComponent = DirectionalLight ? DirectionalLight->GetComponent() : nullptr;
+    if (DirectionalLightComponent)
+    {
+        DirectionalLightComponent->SetMobility(EComponentMobility::Movable);
+        DirectionalLightComponent->SetIntensity(3.5f);
+        DirectionalLightComponent->SetLightColor(FLinearColor(0.78f, 0.9f, 1.0f));
+        DirectionalLightComponent->SetCastShadows(false);
+    }
+
+    ASkyLight* SkyLight = World->SpawnActor<ASkyLight>(FVector::ZeroVector, FRotator::ZeroRotator, LightSpawnParams);
+    USkyLightComponent* SkyLightComponent = SkyLight ? SkyLight->GetLightComponent() : nullptr;
+    if (SkyLightComponent)
+    {
+        SkyLightComponent->SetMobility(EComponentMobility::Movable);
+        SkyLightComponent->SetIntensity(1.2f);
+        SkyLightComponent->SetLightColor(FLinearColor(0.25f, 0.38f, 0.52f));
     }
 }
 
@@ -124,10 +152,15 @@ bool ARiftGameMode::AreAllPlayersDead() const
     {
         const APlayerController* PlayerController = It->Get();
         const APawn* Pawn = PlayerController ? PlayerController->GetPawn() : nullptr;
+        if (!Pawn)
+        {
+            return false;
+        }
+
         const URiftHealthComponent* HealthComponent = Pawn ? Pawn->FindComponentByClass<URiftHealthComponent>() : nullptr;
         if (!HealthComponent)
         {
-            continue;
+            return false;
         }
 
         PlayerCount++;

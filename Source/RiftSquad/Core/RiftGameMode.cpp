@@ -1,5 +1,6 @@
 #include "Core/RiftGameMode.h"
 #include "Characters/RiftPlayerCharacter.h"
+#include "Combat/RiftHealthComponent.h"
 #include "Core/RiftGameState.h"
 #include "Core/RiftPlayerController.h"
 #include "Components/PointLightComponent.h"
@@ -93,4 +94,48 @@ void ARiftGameMode::SpawnRuntimeVisualFallback()
         PointLightComponent->SetIntensity(80000.0f);
         PointLightComponent->SetAttenuationRadius(3000.0f);
     }
+}
+
+void ARiftGameMode::NotifyPlayerDied()
+{
+    if (!HasAuthority() || !AreAllPlayersDead())
+    {
+        return;
+    }
+
+    if (ARiftGameState* RiftGameState = GetGameState<ARiftGameState>())
+    {
+        RiftGameState->SetCurrentRunPhase(ERiftRunPhase::Defeat);
+        RiftGameState->SetLastRewardSummary(TEXT("Squad wiped"));
+    }
+}
+
+bool ARiftGameMode::AreAllPlayersDead() const
+{
+    const UWorld* World = GetWorld();
+    if (!World)
+    {
+        return false;
+    }
+
+    int32 PlayerCount = 0;
+    int32 DeadCount = 0;
+    for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+    {
+        const APlayerController* PlayerController = It->Get();
+        const APawn* Pawn = PlayerController ? PlayerController->GetPawn() : nullptr;
+        const URiftHealthComponent* HealthComponent = Pawn ? Pawn->FindComponentByClass<URiftHealthComponent>() : nullptr;
+        if (!HealthComponent)
+        {
+            continue;
+        }
+
+        PlayerCount++;
+        if (HealthComponent->IsDead())
+        {
+            DeadCount++;
+        }
+    }
+
+    return PlayerCount > 0 && PlayerCount == DeadCount;
 }

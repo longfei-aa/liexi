@@ -85,6 +85,19 @@ void URiftHealthComponent::SetMaxHealth(float NewMaxHealth, bool bFillHealth)
     OnHealthChanged.Broadcast(this, CurrentHealth, CurrentHealth - PreviousHealth);
 }
 
+void URiftHealthComponent::Heal(float HealAmount)
+{
+    AActor* Owner = GetOwner();
+    if (!Owner || !Owner->HasAuthority() || bIsDead || HealAmount <= 0.0f)
+    {
+        return;
+    }
+
+    const float PreviousHealth = CurrentHealth;
+    CurrentHealth = FMath::Clamp(CurrentHealth + HealAmount, 0.0f, MaxHealth);
+    OnHealthChanged.Broadcast(this, CurrentHealth, CurrentHealth - PreviousHealth);
+}
+
 void URiftHealthComponent::OnRep_CurrentHealth(float PreviousHealth)
 {
     OnHealthChanged.Broadcast(this, CurrentHealth, CurrentHealth - PreviousHealth);

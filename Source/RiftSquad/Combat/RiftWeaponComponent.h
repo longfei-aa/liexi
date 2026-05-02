@@ -14,17 +14,31 @@ class RIFTSQUAD_API URiftWeaponComponent : public UActorComponent
 public:
     URiftWeaponComponent();
 
+    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
     UFUNCTION(BlueprintCallable, Category = "Rift|Weapon")
     void RequestFire(FVector Origin, FVector Direction);
+
+    UFUNCTION(BlueprintCallable, Category = "Rift|Weapon")
+    void AddDamage(float BonusDamage);
+
+    UFUNCTION(BlueprintCallable, Category = "Rift|Weapon")
+    void MultiplyFireInterval(float Multiplier);
+
+    UFUNCTION(BlueprintPure, Category = "Rift|Weapon")
+    float GetDamage() const { return Damage; }
+
+    UFUNCTION(BlueprintPure, Category = "Rift|Weapon")
+    float GetFireInterval() const { return FireInterval; }
 
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rift|Weapon")
     TSubclassOf<ARiftProjectile> ProjectileClass;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rift|Weapon")
+    UPROPERTY(EditDefaultsOnly, Replicated, BlueprintReadOnly, Category = "Rift|Weapon")
     float Damage;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rift|Weapon")
+    UPROPERTY(EditDefaultsOnly, Replicated, BlueprintReadOnly, Category = "Rift|Weapon")
     float FireInterval;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rift|Weapon")

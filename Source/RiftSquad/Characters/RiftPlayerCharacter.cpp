@@ -3,6 +3,7 @@
 #include "Combat/RiftHealthComponent.h"
 #include "Combat/RiftWeaponComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Core/RiftGameMode.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -67,6 +68,11 @@ void ARiftPlayerCharacter::BeginPlay()
 {
     Super::BeginPlay();
 
+    if (HealthComponent)
+    {
+        HealthComponent->OnDeath.AddDynamic(this, &ARiftPlayerCharacter::HandleDeath);
+    }
+
     if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
     {
         if (ULocalPlayer* LocalPlayer = PlayerController->GetLocalPlayer())
@@ -107,8 +113,28 @@ void ARiftPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
     }
 }
 
+void ARiftPlayerCharacter::MultiplyMoveSpeed(float Multiplier)
+{
+    if (!HasAuthority())
+    {
+        return;
+    }
+
+    GetCharacterMovement()->MaxWalkSpeed = FMath::Clamp(GetCharacterMovement()->MaxWalkSpeed * Multiplier, 250.0f, 1200.0f);
+}
+
+float ARiftPlayerCharacter::GetCurrentMoveSpeed() const
+{
+    return GetCharacterMovement() ? GetCharacterMovement()->MaxWalkSpeed : 0.0f;
+}
+
 void ARiftPlayerCharacter::Move(const FInputActionValue& Value)
 {
+    if (HealthComponent && HealthComponent->IsDead())
+    {
+        return;
+    }
+
     const FVector2D MovementVector = Value.Get<FVector2D>();
     AddMovementInput(FVector::ForwardVector, MovementVector.Y);
     AddMovementInput(FVector::RightVector, MovementVector.X);
@@ -116,6 +142,11 @@ void ARiftPlayerCharacter::Move(const FInputActionValue& Value)
 
 void ARiftPlayerCharacter::Fire(const FInputActionValue& Value)
 {
+    if (HealthComponent && HealthComponent->IsDead())
+    {
+        return;
+    }
+
     const FVector AimDirection = GetAimDirection();
     SetActorRotation(AimDirection.Rotation());
 
@@ -127,16 +158,31 @@ void ARiftPlayerCharacter::Fire(const FInputActionValue& Value)
 
 void ARiftPlayerCharacter::MoveForward(float Value)
 {
+    if (HealthComponent && HealthComponent->IsDead())
+    {
+        return;
+    }
+
     AddMovementInput(FVector::ForwardVector, Value);
 }
 
 void ARiftPlayerCharacter::MoveRight(float Value)
 {
+    if (HealthComponent && HealthComponent->IsDead())
+    {
+        return;
+    }
+
     AddMovementInput(FVector::RightVector, Value);
 }
 
 void ARiftPlayerCharacter::FireLegacy()
 {
+    if (HealthComponent && HealthComponent->IsDead())
+    {
+        return;
+    }
+
     const FVector AimDirection = GetAimDirection();
     SetActorRotation(AimDirection.Rotation());
 
@@ -173,4 +219,24 @@ FVector ARiftPlayerCharacter::GetAimDirection() const
     AimDirection.Z = 0.0f;
 
     return AimDirection.IsNearlyZero() ? GetActorForwardVector() : AimDirection.GetSafeNormal();
+}
+
+void ARiftPlayerCharacter::HandleDeath(URiftHealthComponent* DeadHealthComponent, AActor* DamageInstigator)
+{
+    if (!HasAuthority())
+    {
+        return;
+    }
+
+    GetCharacterMovement()->DisableMovement();
+
+    if (VisualMesh)
+    {
+        VisualMesh->SetRelativeScale3D(FVector(0.8f, 0.8f, 0.18f));
+    }
+
+    if (ARiftGameMode* RiftGameMode = GetWorld() ? GetWorld()->GetAuthGameMode<ARiftGameMode>() : nullptr)
+    {
+        RiftGameMode->NotifyPlayerDied();
+    }
 }

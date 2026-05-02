@@ -30,10 +30,18 @@ public:
     UFUNCTION(BlueprintPure, Category = "Rift|Run")
     int32 GetTotalRoomCount() const { return TotalRoomCount; }
 
+    UFUNCTION(BlueprintPure, Category = "Rift|Reward")
+    const TArray<FRiftRewardOption>& GetRewardOptions() const { return RewardOptions; }
+
+    UFUNCTION(BlueprintPure, Category = "Rift|Reward")
+    FString GetLastRewardSummary() const { return LastRewardSummary; }
+
     void SetCurrentRoomPhase(ERiftRoomPhase NewPhase);
     void SetAliveEnemyCount(int32 NewCount);
     void SetCurrentRunPhase(ERiftRunPhase NewPhase);
     void SetRoomProgress(int32 NewCurrentRoomIndex, int32 NewTotalRoomCount);
+    void SetRewardOptions(const TArray<FRiftRewardOption>& NewRewardOptions);
+    void SetLastRewardSummary(const FString& NewSummary);
 
 protected:
     UPROPERTY(ReplicatedUsing = OnRep_CurrentRunPhase, BlueprintReadOnly, Category = "Rift|Run")
@@ -51,6 +59,12 @@ protected:
     UPROPERTY(ReplicatedUsing = OnRep_RoomProgress, BlueprintReadOnly, Category = "Rift|Run")
     int32 TotalRoomCount;
 
+    UPROPERTY(ReplicatedUsing = OnRep_RewardOptions, BlueprintReadOnly, Category = "Rift|Reward")
+    TArray<FRiftRewardOption> RewardOptions;
+
+    UPROPERTY(ReplicatedUsing = OnRep_LastRewardSummary, BlueprintReadOnly, Category = "Rift|Reward")
+    FString LastRewardSummary;
+
     UFUNCTION()
     void OnRep_CurrentRunPhase();
 
@@ -62,4 +76,10 @@ protected:
 
     UFUNCTION()
     void OnRep_RoomProgress();
+
+    UFUNCTION()
+    void OnRep_RewardOptions();
+
+    UFUNCTION()
+    void OnRep_LastRewardSummary();
 };

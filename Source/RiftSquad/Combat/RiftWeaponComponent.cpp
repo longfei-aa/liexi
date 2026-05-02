@@ -1,5 +1,6 @@
 #include "Combat/RiftWeaponComponent.h"
 #include "Combat/RiftProjectile.h"
+#include "Net/UnrealNetwork.h"
 
 URiftWeaponComponent::URiftWeaponComponent()
 {
@@ -11,6 +12,14 @@ URiftWeaponComponent::URiftWeaponComponent()
     MuzzleOffset = 70.0f;
     LastFireTime = -1000.0f;
     ProjectileClass = ARiftProjectile::StaticClass();
+}
+
+void URiftWeaponComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+    DOREPLIFETIME(URiftWeaponComponent, Damage);
+    DOREPLIFETIME(URiftWeaponComponent, FireInterval);
 }
 
 void URiftWeaponComponent::RequestFire(FVector Origin, FVector Direction)
@@ -35,6 +44,28 @@ void URiftWeaponComponent::RequestFire(FVector Origin, FVector Direction)
 void URiftWeaponComponent::ServerRequestFire_Implementation(FVector_NetQuantize Origin, FVector_NetQuantizeNormal Direction)
 {
     FireInternal(Origin, Direction);
+}
+
+void URiftWeaponComponent::AddDamage(float BonusDamage)
+{
+    AActor* Owner = GetOwner();
+    if (!Owner || !Owner->HasAuthority())
+    {
+        return;
+    }
+
+    Damage = FMath::Max(1.0f, Damage + BonusDamage);
+}
+
+void URiftWeaponComponent::MultiplyFireInterval(float Multiplier)
+{
+    AActor* Owner = GetOwner();
+    if (!Owner || !Owner->HasAuthority())
+    {
+        return;
+    }
+
+    FireInterval = FMath::Clamp(FireInterval * Multiplier, 0.08f, 2.0f);
 }
 
 void URiftWeaponComponent::FireInternal(FVector Origin, FVector Direction)

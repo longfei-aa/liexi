@@ -30,6 +30,12 @@ public:
     UFUNCTION(BlueprintPure, Category = "Rift|Components")
     URiftWeaponComponent* GetWeaponComponent() const { return WeaponComponent; }
 
+    UFUNCTION(BlueprintCallable, Category = "Rift|Stats")
+    void MultiplyMoveSpeed(float Multiplier);
+
+    UFUNCTION(BlueprintPure, Category = "Rift|Stats")
+    float GetCurrentMoveSpeed() const;
+
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rift|Camera")
     TObjectPtr<USpringArmComponent> CameraBoom;
@@ -61,4 +67,7 @@ protected:
     void MoveRight(float Value);
     void FireLegacy();
     FVector GetAimDirection() const;
+
+    UFUNCTION()
+    void HandleDeath(URiftHealthComponent* DeadHealthComponent, AActor* DamageInstigator);
 };

@@ -27,6 +27,9 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Rift|Health")
     void SetMaxHealth(float NewMaxHealth, bool bFillHealth);
 
+    UFUNCTION(BlueprintCallable, Category = "Rift|Health")
+    void Heal(float HealAmount);
+
     UFUNCTION(BlueprintPure, Category = "Rift|Health")
     float GetCurrentHealth() const { return CurrentHealth; }
 

@@ -16,4 +16,14 @@ public:
 
     UFUNCTION(Server, Reliable)
     void ServerRequestInteract(AActor* TargetActor);
+
+    UFUNCTION(Server, Reliable)
+    void ServerSelectReward(int32 OptionIndex);
+
+protected:
+    virtual void SetupInputComponent() override;
+
+    void SelectRewardOne();
+    void SelectRewardTwo();
+    void SelectRewardThree();
 };

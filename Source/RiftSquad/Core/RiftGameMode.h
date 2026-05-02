@@ -16,6 +16,8 @@ public:
 
     virtual void BeginPlay() override;
 
+    void NotifyPlayerDied();
+
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rift|Room")
     bool bSpawnInitialRoomManager;
@@ -27,4 +29,5 @@ protected:
     TSubclassOf<ARiftRoomManager> RoomManagerClass;
 
     void SpawnRuntimeVisualFallback();
+    bool AreAllPlayersDead() const;
 };

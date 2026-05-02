@@ -1,7 +1,10 @@
 #include "Rooms/RiftRoomManager.h"
+#include "Characters/RiftPlayerCharacter.h"
+#include "Combat/RiftHealthComponent.h"
+#include "Combat/RiftWeaponComponent.h"
 #include "Core/RiftGameState.h"
+#include "Core/RiftPlayerController.h"
 #include "Enemies/RiftEnemyBase.h"
-#include "TimerManager.h"
 #include "Net/UnrealNetwork.h"
 
 ARiftRoomManager::ARiftRoomManager()
@@ -14,7 +17,6 @@ ARiftRoomManager::ARiftRoomManager()
     RoomPhase = ERiftRoomPhase::Idle;
     AliveEnemyCount = 0;
     CurrentRoomIndex = 0;
-    RewardPhaseDuration = 3.0f;
 
     SpawnOffsets.Add(FVector(300.0f, 0.0f, 80.0f));
     SpawnOffsets.Add(FVector(-300.0f, 200.0f, 80.0f));
@@ -81,8 +83,6 @@ void ARiftRoomManager::StartRun()
         return;
     }
 
-    GetWorldTimerManager().ClearTimer(RewardAdvanceTimerHandle);
-
     for (ARiftEnemyBase* Enemy : ActiveEnemies)
     {
         if (IsValid(Enemy))
@@ -92,6 +92,7 @@ void ARiftRoomManager::StartRun()
     }
 
     ActiveEnemies.Empty();
+    CurrentRewardOptions.Empty();
     AliveEnemyCount = 0;
     CurrentRoomIndex = 0;
     RoomPhase = ERiftRoomPhase::Idle;
@@ -113,11 +114,10 @@ void ARiftRoomManager::StartRoom()
         return;
     }
 
-    GetWorldTimerManager().ClearTimer(RewardAdvanceTimerHandle);
-
     CurrentRoomIndex++;
     RoomPhase = ERiftRoomPhase::Combat;
     ActiveEnemies.Empty();
+    CurrentRewardOptions.Empty();
 
     SpawnCurrentRoomWave();
 
@@ -181,10 +181,24 @@ void ARiftRoomManager::CompleteRoom()
     else
     {
         RoomPhase = ERiftRoomPhase::Reward;
-        GetWorldTimerManager().SetTimer(RewardAdvanceTimerHandle, this, &ARiftRoomManager::AdvanceToNextRoom, RewardPhaseDuration, false);
+        GenerateRewardOptions();
     }
 
     UpdateGameState();
+}
+
+void ARiftRoomManager::SelectRewardForPlayer(ARiftPlayerController* PlayerController, int32 OptionIndex)
+{
+    if (!HasAuthority() || RoomPhase != ERiftRoomPhase::Reward || !CurrentRewardOptions.IsValidIndex(OptionIndex))
+    {
+        return;
+    }
+
+    const FRiftRewardOption SelectedReward = CurrentRewardOptions[OptionIndex];
+    ApplyRewardToPlayer(PlayerController, SelectedReward);
+    CurrentRewardOptions.Empty();
+    UpdateGameState();
+    AdvanceToNextRoom();
 }
 
 void ARiftRoomManager::AdvanceToNextRoom()
@@ -231,6 +245,77 @@ FVector ARiftRoomManager::GetSpawnLocationForIndex(int32 SpawnIndex) const
     return GetActorLocation() + FVector(FMath::Cos(Angle) * Radius, FMath::Sin(Angle) * Radius, 80.0f);
 }
 
+void ARiftRoomManager::GenerateRewardOptions()
+{
+    CurrentRewardOptions.Empty();
+
+    const int32 RewardSeed = FMath::Max(1, CurrentRoomIndex);
+    TArray<FRiftRewardOption> RewardPool;
+    RewardPool.Add(FRiftRewardOption(ERiftRewardType::WeaponDamage, 4.0f + RewardSeed, TEXT("Overcharged Rounds"), TEXT("+ weapon damage")));
+    RewardPool.Add(FRiftRewardOption(ERiftRewardType::FireRate, 0.85f, TEXT("Rapid Capacitor"), TEXT("15% faster fire rate")));
+    RewardPool.Add(FRiftRewardOption(ERiftRewardType::MaxHealth, 25.0f, TEXT("Alloy Plating"), TEXT("+ max HP and refill")));
+    RewardPool.Add(FRiftRewardOption(ERiftRewardType::Heal, 35.0f, TEXT("Field Repair"), TEXT("restore HP")));
+    RewardPool.Add(FRiftRewardOption(ERiftRewardType::MoveSpeed, 1.12f, TEXT("Phase Boots"), TEXT("+ movement speed")));
+
+    for (int32 OptionIndex = 0; OptionIndex < 3 && RewardPool.Num() > 0; ++OptionIndex)
+    {
+        const int32 PoolIndex = (RewardSeed + OptionIndex * 2) % RewardPool.Num();
+        CurrentRewardOptions.Add(RewardPool[PoolIndex]);
+        RewardPool.RemoveAt(PoolIndex);
+    }
+}
+
+void ARiftRoomManager::ApplyRewardToPlayer(ARiftPlayerController* PlayerController, const FRiftRewardOption& RewardOption)
+{
+    ARiftPlayerCharacter* PlayerCharacter = PlayerController ? Cast<ARiftPlayerCharacter>(PlayerController->GetPawn()) : nullptr;
+    if (!PlayerCharacter)
+    {
+        return;
+    }
+
+    URiftHealthComponent* HealthComponent = PlayerCharacter->GetHealthComponent();
+    URiftWeaponComponent* WeaponComponent = PlayerCharacter->GetWeaponComponent();
+
+    switch (RewardOption.Type)
+    {
+        case ERiftRewardType::WeaponDamage:
+            if (WeaponComponent)
+            {
+                WeaponComponent->AddDamage(RewardOption.Magnitude);
+            }
+            break;
+        case ERiftRewardType::FireRate:
+            if (WeaponComponent)
+            {
+                WeaponComponent->MultiplyFireInterval(RewardOption.Magnitude);
+            }
+            break;
+        case ERiftRewardType::MaxHealth:
+            if (HealthComponent)
+            {
+                HealthComponent->SetMaxHealth(HealthComponent->GetMaxHealth() + RewardOption.Magnitude, true);
+            }
+            break;
+        case ERiftRewardType::Heal:
+            if (HealthComponent)
+            {
+                HealthComponent->Heal(RewardOption.Magnitude);
+            }
+            break;
+        case ERiftRewardType::MoveSpeed:
+            PlayerCharacter->MultiplyMoveSpeed(RewardOption.Magnitude);
+            break;
+        default:
+            break;
+    }
+
+    if (ARiftGameState* RiftGameState = GetWorld() ? GetWorld()->GetGameState<ARiftGameState>() : nullptr)
+    {
+        const FString Summary = FString::Printf(TEXT("Selected: %s"), *RewardOption.Name);
+        RiftGameState->SetLastRewardSummary(Summary);
+    }
+}
+
 void ARiftRoomManager::UpdateGameState()
 {
     if (ARiftGameState* RiftGameState = GetWorld() ? GetWorld()->GetGameState<ARiftGameState>() : nullptr)
@@ -238,6 +323,7 @@ void ARiftRoomManager::UpdateGameState()
         RiftGameState->SetCurrentRoomPhase(RoomPhase);
         RiftGameState->SetAliveEnemyCount(AliveEnemyCount);
         RiftGameState->SetRoomProgress(CurrentRoomIndex, RoomWaves.Num());
+        RiftGameState->SetRewardOptions(CurrentRewardOptions);
 
         ERiftRunPhase RunPhase = ERiftRunPhase::Setup;
         switch (RoomPhase)

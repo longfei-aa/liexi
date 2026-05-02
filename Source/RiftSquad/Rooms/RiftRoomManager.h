@@ -6,6 +6,7 @@
 #include "RiftRoomManager.generated.h"
 
 class ARiftEnemyBase;
+class ARiftPlayerController;
 
 USTRUCT(BlueprintType)
 struct FRiftRoomWaveConfig
@@ -80,6 +81,9 @@ public:
     UFUNCTION(BlueprintPure, Category = "Rift|Run")
     int32 GetTotalRoomCount() const { return RoomWaves.Num(); }
 
+    UFUNCTION(BlueprintCallable, Category = "Rift|Reward")
+    void SelectRewardForPlayer(ARiftPlayerController* PlayerController, int32 OptionIndex);
+
 protected:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rift|Room")
     bool bAutoStart;
@@ -93,9 +97,6 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rift|Room")
     TArray<FRiftRoomWaveConfig> RoomWaves;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rift|Room")
-    float RewardPhaseDuration;
-
     UPROPERTY(ReplicatedUsing = OnRep_RoomPhase, BlueprintReadOnly, Category = "Rift|Room")
     ERiftRoomPhase RoomPhase;
 
@@ -108,7 +109,8 @@ protected:
     UPROPERTY()
     TArray<TObjectPtr<ARiftEnemyBase>> ActiveEnemies;
 
-    FTimerHandle RewardAdvanceTimerHandle;
+    UPROPERTY()
+    TArray<FRiftRewardOption> CurrentRewardOptions;
 
     UFUNCTION()
     void OnRep_RoomPhase();
@@ -123,5 +125,7 @@ protected:
     void AdvanceToNextRoom();
     void SpawnCurrentRoomWave();
     FVector GetSpawnLocationForIndex(int32 SpawnIndex) const;
+    void GenerateRewardOptions();
+    void ApplyRewardToPlayer(ARiftPlayerController* PlayerController, const FRiftRewardOption& RewardOption);
     void UpdateGameState();
 };

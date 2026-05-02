@@ -12,6 +12,14 @@ Saved/
 *.sdf
 *.VC.db
 *.VC.opendb
+.soft-ue-bridge/
+
+# Keep SoftUEBridge source folders named Build; the top-level Build/ rule
+# would otherwise hide real plugin source files.
+!Plugins/SoftUEBridge/Source/SoftUEBridgeEditor/Private/Tools/Build/
+!Plugins/SoftUEBridge/Source/SoftUEBridgeEditor/Private/Tools/Build/**
+!Plugins/SoftUEBridge/Source/SoftUEBridgeEditor/Public/Tools/Build/
+!Plugins/SoftUEBridge/Source/SoftUEBridgeEditor/Public/Tools/Build/**
 
 # IDE and OS files
 .DS_Store

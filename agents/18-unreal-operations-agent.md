@@ -33,6 +33,8 @@ Optional UE automation tool:
 
 - `soft-ue-cli`
 - Repository: `https://github.com/softdaddy-o/soft-ue-cli`
+- Current installed CLI:
+  - `/Users/shelongfei/.local/bin/soft-ue-cli`
 - Install reference:
   - `pip install soft-ue-cli`
   - `pip install soft-ue-cli[mcp]` only if MCP integration is explicitly needed
@@ -45,8 +47,10 @@ Compatibility guard:
 
 - `soft-ue-cli` is documented as actively developed against Unreal Engine 5.7.
 - This project currently uses Unreal Engine 5.6.1.
+- The project contains a local patched `Plugins/SoftUEBridge` copy. Read `Plugins/SoftUEBridge/README_RIFTSQUAD.md` before updating or replacing it.
 - Always run setup and diagnostic checks before relying on bridge-backed commands.
 - If a bridge command is unstable on UE 5.6.1, fall back to native Unreal CLI, Unreal Python, C++ defaults, or manual editor instructions.
+- `pie-session start` worked in a `-nullrhi` editor test, but follow-up `pie-tick` and `pie-session get-state` timed out. Use a normal GUI editor session for PIE control validation until this is proven stable.
 
 ## When To Use This Agent
 
@@ -105,19 +109,18 @@ Install and verify `soft-ue-cli`:
 
 ```zsh
 pip install soft-ue-cli
-soft-ue-cli setup /Users/shelongfei/Documents/game
-soft-ue-cli check-setup
-soft-ue-cli project-info
+/Users/shelongfei/.local/bin/soft-ue-cli setup /Users/shelongfei/Documents/game
+/Users/shelongfei/.local/bin/soft-ue-cli check-setup
+/Users/shelongfei/.local/bin/soft-ue-cli project-info
 ```
 
 Typical bridge-backed checks after the editor is running:
 
 ```zsh
-soft-ue-cli status
-soft-ue-cli query-level --limit 50
-soft-ue-cli pie-session start --mode SelectedViewport
-soft-ue-cli pie-tick --frames 30
-soft-ue-cli pie-session stop
+/Users/shelongfei/.local/bin/soft-ue-cli status
+/Users/shelongfei/.local/bin/soft-ue-cli query-level --limit 50
+/Users/shelongfei/.local/bin/soft-ue-cli query-asset --asset-path /Game/RiftSquad/Input/IA_Move
+/Users/shelongfei/.local/bin/soft-ue-cli run-python-script --script "import unreal; print(unreal.SystemLibrary.get_engine_version())"
 ```
 
 ## Collaborate With

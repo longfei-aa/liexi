@@ -23,12 +23,14 @@ Each file is a self-contained specialist role used by `../MAIN_AGENT.md` for tas
 - `15-testing-release-agent.md`
 - `16-risk-management-agent.md`
 - `17-milestone-acceptance-agent.md`
+- `18-unreal-operations-agent.md`
 
 ## Usage Rule
 
 - single-domain task: load one expert file
 - cross-domain task: load one lead expert plus the required support experts
 - project-level task: start with `../MAIN_AGENT.md`
+- Unreal Editor execution task: load `18-unreal-operations-agent.md` only when command-line editor work, asset inspection, PIE smoke checks, or `soft-ue-cli` operation is required
 
 ## Project Source Of Truth
 

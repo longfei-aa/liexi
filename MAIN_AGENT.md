@@ -95,6 +95,11 @@ Examples:
   - support: `agents/06-level-procgen-agent.md`
   - support: `agents/11-music-audio-agent.md`
   - support: `agents/15-testing-release-agent.md`
+- regenerate a map or inspect UE assets from CLI:
+  - lead: `agents/18-unreal-operations-agent.md`
+  - support: `agents/06-level-procgen-agent.md` only if room layout design changes
+  - support: `agents/09-technical-architecture-agent.md` only if C++/Blueprint ownership changes
+  - support: `agents/15-testing-release-agent.md` only if this is a milestone validation task
 
 ## Routing Table
 
@@ -115,6 +120,23 @@ Examples:
 - QA, regression, packaging, release readiness -> `agents/15-testing-release-agent.md`
 - scope risk, technical risk, mitigation gates -> `agents/16-risk-management-agent.md`
 - definition of done, milestone entry and exit criteria -> `agents/17-milestone-acceptance-agent.md`
+- Unreal Editor CLI, Unreal Python, soft-ue-cli, asset/level inspection, PIE smoke checks -> `agents/18-unreal-operations-agent.md`
+
+## Unreal Operations Rule
+
+Use `agents/18-unreal-operations-agent.md` only when the task requires direct Unreal Editor operation or Unreal-specific command execution.
+
+Good uses:
+
+- create or regenerate `.uasset` / `.umap` assets
+- run UnrealEditor with `-ExecutePythonScript`
+- install or verify `soft-ue-cli`
+- inspect level actors, Blueprint assets, widgets, or DataAssets
+- run PIE smoke checks or capture screenshots
+
+Do not involve it for ordinary design writing, C++ gameplay implementation, balance tuning, narrative work, or scheduling unless the task is blocked on Unreal Editor behavior.
+
+`soft-ue-cli` is optional tooling, not a mandatory dependency. Because the project currently targets UE 5.6.1 and the referenced tool is documented around newer UE versions, this agent must verify setup before using bridge-backed commands and must fall back to native Unreal CLI or Unreal Python when needed.
 
 ## Collaboration Contracts
 

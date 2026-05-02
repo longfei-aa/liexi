@@ -9,7 +9,7 @@ Checked on 2026-05-02:
 - `xcode-select -p` points to `/Applications/Xcode.app/Contents/Developer`.
 - `xcodebuild -version` returns `Xcode 26.4.1`.
 - `mas` is installed, but App Store CLI access is unreliable in the current CN store region.
-- Epic Games Launcher was installed once through Homebrew, but it is not currently present at `/Applications/Epic Games Launcher.app`.
+- Epic Games Launcher is installed at `/Applications/Epic Games Launcher.app`.
 - `UnrealEditor.app` was not found under `/Applications` or `/Users/Shared/Epic Games`.
 - Git global proxy points to `http://127.0.0.1:7897`, but that port was not listening during the last check.
 
@@ -35,6 +35,14 @@ open -a "Epic Games Launcher"
 ```
 
 Then log in and install Unreal Engine 5.6 from the Library tab.
+
+If Homebrew says the cask is installed but `open -a "Epic Games Launcher"` fails, clean the broken cask state and reinstall:
+
+```bash
+brew uninstall --cask --force epic-games
+brew install --cask epic-games
+open -a "Epic Games Launcher"
+```
 
 Expected editor path:
 

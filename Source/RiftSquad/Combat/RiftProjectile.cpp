@@ -1,7 +1,9 @@
 #include "Combat/RiftProjectile.h"
 #include "Combat/RiftHealthComponent.h"
 #include "Components/SphereComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "UObject/ConstructorHelpers.h"
 
 ARiftProjectile::ARiftProjectile()
 {
@@ -14,6 +16,17 @@ ARiftProjectile::ARiftProjectile()
     CollisionComponent->SetCollisionProfileName(TEXT("BlockAllDynamic"));
     CollisionComponent->OnComponentHit.AddDynamic(this, &ARiftProjectile::OnProjectileHit);
     RootComponent = CollisionComponent;
+
+    VisualMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("VisualMesh"));
+    VisualMesh->SetupAttachment(RootComponent);
+    VisualMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    VisualMesh->SetRelativeScale3D(FVector(0.22f));
+
+    static ConstructorHelpers::FObjectFinder<UStaticMesh> ProjectileMeshFinder(TEXT("/Engine/BasicShapes/Sphere.Sphere"));
+    if (ProjectileMeshFinder.Succeeded())
+    {
+        VisualMesh->SetStaticMesh(ProjectileMeshFinder.Object);
+    }
 
     ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
     ProjectileMovement->InitialSpeed = 1800.0f;

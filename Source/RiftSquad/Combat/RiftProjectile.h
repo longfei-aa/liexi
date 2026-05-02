@@ -6,6 +6,7 @@
 
 class UProjectileMovementComponent;
 class USphereComponent;
+class UStaticMeshComponent;
 
 UCLASS()
 class RIFTSQUAD_API ARiftProjectile : public AActor
@@ -22,6 +23,9 @@ public:
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rift|Projectile")
     TObjectPtr<USphereComponent> CollisionComponent;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rift|Projectile")
+    TObjectPtr<UStaticMeshComponent> VisualMesh;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rift|Projectile")
     TObjectPtr<UProjectileMovementComponent> ProjectileMovement;

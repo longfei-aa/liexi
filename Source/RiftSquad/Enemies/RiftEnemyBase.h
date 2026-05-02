@@ -6,6 +6,7 @@
 
 class ARiftRoomManager;
 class URiftHealthComponent;
+class UStaticMeshComponent;
 
 UCLASS()
 class RIFTSQUAD_API ARiftEnemyBase : public ACharacter
@@ -23,6 +24,9 @@ public:
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rift|Components")
     TObjectPtr<URiftHealthComponent> HealthComponent;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rift|Visual")
+    TObjectPtr<UStaticMeshComponent> VisualMesh;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rift|Enemy")
     float MoveSpeed;

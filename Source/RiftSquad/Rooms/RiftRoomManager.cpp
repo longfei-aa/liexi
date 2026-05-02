@@ -9,6 +9,7 @@ ARiftRoomManager::ARiftRoomManager()
     bReplicates = true;
 
     bAutoStart = true;
+    EnemyClass = ARiftEnemyBase::StaticClass();
     RoomPhase = ERiftRoomPhase::Idle;
     AliveEnemyCount = 0;
 

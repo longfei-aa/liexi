@@ -4,6 +4,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "RiftGameMode.generated.h"
 
+class ARiftRoomManager;
+
 UCLASS()
 class RIFTSQUAD_API ARiftGameMode : public AGameModeBase
 {
@@ -11,4 +13,13 @@ class RIFTSQUAD_API ARiftGameMode : public AGameModeBase
 
 public:
     ARiftGameMode();
+
+    virtual void BeginPlay() override;
+
+protected:
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rift|Room")
+    bool bSpawnInitialRoomManager;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rift|Room")
+    TSubclassOf<ARiftRoomManager> RoomManagerClass;
 };

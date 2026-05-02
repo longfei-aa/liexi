@@ -2,11 +2,15 @@
 #include "Camera/CameraComponent.h"
 #include "Combat/RiftHealthComponent.h"
 #include "Combat/RiftWeaponComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "InputAction.h"
 #include "InputActionValue.h"
+#include "InputMappingContext.h"
+#include "UObject/ConstructorHelpers.h"
 
 ARiftPlayerCharacter::ARiftPlayerCharacter()
 {
@@ -27,6 +31,36 @@ ARiftPlayerCharacter::ARiftPlayerCharacter()
 
     HealthComponent = CreateDefaultSubobject<URiftHealthComponent>(TEXT("HealthComponent"));
     WeaponComponent = CreateDefaultSubobject<URiftWeaponComponent>(TEXT("WeaponComponent"));
+
+    VisualMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("VisualMesh"));
+    VisualMesh->SetupAttachment(RootComponent);
+    VisualMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    VisualMesh->SetRelativeLocation(FVector(0.0f, 0.0f, -40.0f));
+    VisualMesh->SetRelativeScale3D(FVector(0.6f, 0.6f, 1.0f));
+
+    static ConstructorHelpers::FObjectFinder<UStaticMesh> PlayerMeshFinder(TEXT("/Engine/BasicShapes/Cylinder.Cylinder"));
+    if (PlayerMeshFinder.Succeeded())
+    {
+        VisualMesh->SetStaticMesh(PlayerMeshFinder.Object);
+    }
+
+    static ConstructorHelpers::FObjectFinder<UInputMappingContext> DefaultContextFinder(TEXT("/Game/RiftSquad/Input/IMC_Player.IMC_Player"));
+    if (DefaultContextFinder.Succeeded())
+    {
+        DefaultMappingContext = DefaultContextFinder.Object;
+    }
+
+    static ConstructorHelpers::FObjectFinder<UInputAction> MoveActionFinder(TEXT("/Game/RiftSquad/Input/IA_Move.IA_Move"));
+    if (MoveActionFinder.Succeeded())
+    {
+        MoveAction = MoveActionFinder.Object;
+    }
+
+    static ConstructorHelpers::FObjectFinder<UInputAction> FireActionFinder(TEXT("/Game/RiftSquad/Input/IA_Fire.IA_Fire"));
+    if (FireActionFinder.Succeeded())
+    {
+        FireAction = FireActionFinder.Object;
+    }
 }
 
 void ARiftPlayerCharacter::BeginPlay()
@@ -51,6 +85,10 @@ void ARiftPlayerCharacter::BeginPlay()
 void ARiftPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+    PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &ARiftPlayerCharacter::MoveForward);
+    PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &ARiftPlayerCharacter::MoveRight);
+    PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &ARiftPlayerCharacter::FireLegacy);
 
     UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(PlayerInputComponent);
     if (!EnhancedInput)
@@ -77,6 +115,27 @@ void ARiftPlayerCharacter::Move(const FInputActionValue& Value)
 }
 
 void ARiftPlayerCharacter::Fire(const FInputActionValue& Value)
+{
+    const FVector AimDirection = GetAimDirection();
+    SetActorRotation(AimDirection.Rotation());
+
+    if (WeaponComponent)
+    {
+        WeaponComponent->RequestFire(GetActorLocation(), AimDirection);
+    }
+}
+
+void ARiftPlayerCharacter::MoveForward(float Value)
+{
+    AddMovementInput(FVector::ForwardVector, Value);
+}
+
+void ARiftPlayerCharacter::MoveRight(float Value)
+{
+    AddMovementInput(FVector::RightVector, Value);
+}
+
+void ARiftPlayerCharacter::FireLegacy()
 {
     const FVector AimDirection = GetAimDirection();
     SetActorRotation(AimDirection.Rotation());

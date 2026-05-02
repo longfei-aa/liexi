@@ -1,8 +1,10 @@
 #include "Enemies/RiftEnemyBase.h"
 #include "Combat/RiftHealthComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "Enemies/RiftEnemyAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Rooms/RiftRoomManager.h"
+#include "UObject/ConstructorHelpers.h"
 
 ARiftEnemyBase::ARiftEnemyBase()
 {
@@ -13,6 +15,17 @@ ARiftEnemyBase::ARiftEnemyBase()
     AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
     HealthComponent = CreateDefaultSubobject<URiftHealthComponent>(TEXT("HealthComponent"));
+    VisualMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("VisualMesh"));
+    VisualMesh->SetupAttachment(RootComponent);
+    VisualMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    VisualMesh->SetRelativeLocation(FVector(0.0f, 0.0f, -35.0f));
+    VisualMesh->SetRelativeScale3D(FVector(0.5f, 0.5f, 0.8f));
+
+    static ConstructorHelpers::FObjectFinder<UStaticMesh> EnemyMeshFinder(TEXT("/Engine/BasicShapes/Cone.Cone"));
+    if (EnemyMeshFinder.Succeeded())
+    {
+        VisualMesh->SetStaticMesh(EnemyMeshFinder.Object);
+    }
 
     MoveSpeed = 360.0f;
     AttackRange = 175.0f;

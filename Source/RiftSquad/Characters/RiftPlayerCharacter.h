@@ -7,6 +7,7 @@
 class UCameraComponent;
 class UInputAction;
 class UInputMappingContext;
+class UStaticMeshComponent;
 class USpringArmComponent;
 class URiftHealthComponent;
 class URiftWeaponComponent;
@@ -42,6 +43,9 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rift|Components")
     TObjectPtr<URiftWeaponComponent> WeaponComponent;
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rift|Visual")
+    TObjectPtr<UStaticMeshComponent> VisualMesh;
+
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rift|Input")
     TObjectPtr<UInputMappingContext> DefaultMappingContext;
 
@@ -53,5 +57,8 @@ protected:
 
     void Move(const FInputActionValue& Value);
     void Fire(const FInputActionValue& Value);
+    void MoveForward(float Value);
+    void MoveRight(float Value);
+    void FireLegacy();
     FVector GetAimDirection() const;
 };

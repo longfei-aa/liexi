@@ -1,0 +1,23 @@
+{
+  "FileVersion": 3,
+  "EngineAssociation": "5.6",
+  "Category": "Games",
+  "Description": "Rift Squad co-op roguelite prototype",
+  "Modules": [
+    {
+      "Name": "RiftSquad",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "EnhancedInput",
+      "Enabled": true
+    },
+    {
+      "Name": "OnlineSubsystemNull",
+      "Enabled": true
+    }
+  ]
+}

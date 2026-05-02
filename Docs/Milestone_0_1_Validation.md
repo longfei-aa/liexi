@@ -2,8 +2,11 @@
 
 ## Current Toolchain Status
 
-This repository currently contains a hand-authored UE5 C++ project skeleton.
-The local machine did not expose `UnrealEditor.app`, and `xcodebuild` reported Command Line Tools instead of full Xcode, so UE compilation and PIE validation were not run in this pass.
+This repository contains a hand-authored UE5 C++ project skeleton.
+Unreal Engine 5.6 is installed at `/Users/Shared/Epic Games/UE_5.6`.
+Xcode 16.4 is selected at `/Applications/Xcode-16.4.0.app/Contents/Developer`.
+`RiftSquadEditor Mac Development` compiled successfully.
+PIE validation has not run yet because the required map, input assets, and Blueprint subclasses still need to be created in the Unreal Editor.
 
 ## Milestone 0: Project Skeleton
 
@@ -21,7 +24,7 @@ Editor checks when UE5.5/5.6 is installed:
 
 - Open `RiftSquad.uproject`.
 - Let Unreal generate project files if prompted.
-- Build `RiftSquadEditor`.
+- Build `RiftSquadEditor`. Completed on 2026-05-03 with UE 5.6 and Xcode 16.4.
 - Create `Content/RiftSquad/Maps/M_Greybox_CombatRoom.umap`.
 - Create Enhanced Input assets `IMC_Player`, `IA_Move`, and `IA_Fire`.
 - Create `BP_RiftPlayerCharacter` from `ARiftPlayerCharacter`.

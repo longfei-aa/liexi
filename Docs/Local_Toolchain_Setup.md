@@ -5,13 +5,17 @@
 Checked on 2026-05-02:
 
 - Homebrew exists at `/opt/homebrew/bin/brew`.
-- Xcode is installed at `/Applications/Xcode.app`.
-- `xcode-select -p` points to `/Applications/Xcode.app/Contents/Developer`.
-- `xcodebuild -version` returns `Xcode 26.4.1`.
+- Xcode 16.4 is installed at `/Applications/Xcode-16.4.0.app`.
+- Xcode 26.4.1 is installed at `/Applications/Xcode.app`, but it is not selected for this project.
+- `xcode-select -p` points to `/Applications/Xcode-16.4.0.app/Contents/Developer`.
+- `xcodebuild -version` returns `Xcode 16.4`.
+- `xcrun --sdk macosx --show-sdk-version` returns `15.5`.
 - Unreal Engine 5.6 rejects Xcode 26.4.1 for Mac builds because UE 5.6 accepts Apple SDK versions from `15.2.0` to `16.9.0`.
 - `mas` is installed, but App Store CLI access is unreliable in the current CN store region.
 - Epic Games Launcher is installed at `/Applications/Epic Games Launcher.app`.
-- `UnrealEditor.app` was not found under `/Applications` or `/Users/Shared/Epic Games`.
+- Unreal Engine 5.6 is installed at `/Users/Shared/Epic Games/UE_5.6`.
+- `UnrealEditor.app` exists at `/Users/Shared/Epic Games/UE_5.6/Engine/Binaries/Mac/UnrealEditor.app`.
+- `RiftSquadEditor Mac Development` compiled successfully with Xcode 16.4.
 - Git global proxy points to `http://127.0.0.1:7897`, but that port was not listening during the last check.
 
 ## Required Installs

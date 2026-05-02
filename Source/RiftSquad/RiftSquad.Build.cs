@@ -6,6 +6,8 @@ public class RiftSquad : ModuleRules
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
+        PublicIncludePaths.Add(ModuleDirectory);
+
         PublicDependencyModuleNames.AddRange(new[]
         {
             "Core",

@@ -45,7 +45,8 @@ void ARiftProjectile::OnProjectileHit(UPrimitiveComponent* HitComponent, AActor*
 
     if (URiftHealthComponent* HealthComponent = OtherActor->FindComponentByClass<URiftHealthComponent>())
     {
-        HealthComponent->ApplyDamage(Damage, InstigatorActor ? InstigatorActor : GetOwner());
+        AActor* DamageSource = InstigatorActor.Get();
+        HealthComponent->ApplyDamage(Damage, DamageSource ? DamageSource : GetOwner());
     }
 
     Destroy();

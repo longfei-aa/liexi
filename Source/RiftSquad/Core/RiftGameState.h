@@ -21,19 +21,45 @@ public:
     UFUNCTION(BlueprintPure, Category = "Rift|Room")
     int32 GetAliveEnemyCount() const { return AliveEnemyCount; }
 
+    UFUNCTION(BlueprintPure, Category = "Rift|Run")
+    ERiftRunPhase GetCurrentRunPhase() const { return CurrentRunPhase; }
+
+    UFUNCTION(BlueprintPure, Category = "Rift|Run")
+    int32 GetCurrentRoomIndex() const { return CurrentRoomIndex; }
+
+    UFUNCTION(BlueprintPure, Category = "Rift|Run")
+    int32 GetTotalRoomCount() const { return TotalRoomCount; }
+
     void SetCurrentRoomPhase(ERiftRoomPhase NewPhase);
     void SetAliveEnemyCount(int32 NewCount);
+    void SetCurrentRunPhase(ERiftRunPhase NewPhase);
+    void SetRoomProgress(int32 NewCurrentRoomIndex, int32 NewTotalRoomCount);
 
 protected:
+    UPROPERTY(ReplicatedUsing = OnRep_CurrentRunPhase, BlueprintReadOnly, Category = "Rift|Run")
+    ERiftRunPhase CurrentRunPhase;
+
     UPROPERTY(ReplicatedUsing = OnRep_CurrentRoomPhase, BlueprintReadOnly, Category = "Rift|Room")
     ERiftRoomPhase CurrentRoomPhase;
 
     UPROPERTY(ReplicatedUsing = OnRep_AliveEnemyCount, BlueprintReadOnly, Category = "Rift|Room")
     int32 AliveEnemyCount;
 
+    UPROPERTY(ReplicatedUsing = OnRep_RoomProgress, BlueprintReadOnly, Category = "Rift|Run")
+    int32 CurrentRoomIndex;
+
+    UPROPERTY(ReplicatedUsing = OnRep_RoomProgress, BlueprintReadOnly, Category = "Rift|Run")
+    int32 TotalRoomCount;
+
+    UFUNCTION()
+    void OnRep_CurrentRunPhase();
+
     UFUNCTION()
     void OnRep_CurrentRoomPhase();
 
     UFUNCTION()
     void OnRep_AliveEnemyCount();
+
+    UFUNCTION()
+    void OnRep_RoomProgress();
 };

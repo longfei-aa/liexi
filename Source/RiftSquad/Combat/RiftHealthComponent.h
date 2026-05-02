@@ -24,6 +24,9 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Rift|Health")
     void ResetHealth();
 
+    UFUNCTION(BlueprintCallable, Category = "Rift|Health")
+    void SetMaxHealth(float NewMaxHealth, bool bFillHealth);
+
     UFUNCTION(BlueprintPure, Category = "Rift|Health")
     float GetCurrentHealth() const { return CurrentHealth; }
 

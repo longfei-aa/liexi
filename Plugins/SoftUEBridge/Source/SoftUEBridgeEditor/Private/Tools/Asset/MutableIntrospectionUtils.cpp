@@ -45,7 +45,7 @@ namespace
 		int32 ParameterNodeCount = 0;
 	};
 
-	static bool ContainsToken(const FString& Source, std::initializer_list<const TCHAR*> Tokens)
+	static bool ContainsMutableToken(const FString& Source, std::initializer_list<const TCHAR*> Tokens)
 	{
 		for (const TCHAR* Token : Tokens)
 		{
@@ -64,7 +64,7 @@ namespace
 
 	static bool LooksLikeMutableClassName(const FString& ClassName)
 	{
-		return ContainsToken(ClassName, {TEXT("CustomizableObject"), TEXT("Mutable")});
+		return ContainsMutableToken(ClassName, {TEXT("CustomizableObject"), TEXT("Mutable")});
 	}
 
 	static FString JsonValueToFlatString(const TSharedPtr<FJsonValue>& Value)
@@ -390,7 +390,7 @@ namespace
 
 			const FString PropertyName = Property->GetName();
 			const bool bInteresting = bIncludeAllSimpleProperties ||
-				ContainsToken(PropertyName, {
+				ContainsMutableToken(PropertyName, {
 					TEXT("Name"), TEXT("Parameter"), TEXT("Group"), TEXT("Option"),
 					TEXT("Default"), TEXT("Tag"), TEXT("Population"), TEXT("Child"),
 					TEXT("Object"), TEXT("Projector"), TEXT("Table"), TEXT("Mesh"),
@@ -420,24 +420,24 @@ namespace
 
 	static bool IsParameterNode(const FString& ClassName, const FString& Title)
 	{
-		return ContainsToken(ClassName, {TEXT("Parameter")}) || ContainsToken(Title, {TEXT("Parameter")});
+		return ContainsMutableToken(ClassName, {TEXT("Parameter")}) || ContainsMutableToken(Title, {TEXT("Parameter")});
 	}
 
 	static FString DeriveNodeRole(const FString& ClassName, const FString& Title)
 	{
-		if (ContainsToken(ClassName, {TEXT("Projector")}) || ContainsToken(Title, {TEXT("Projector")}))
+		if (ContainsMutableToken(ClassName, {TEXT("Projector")}) || ContainsMutableToken(Title, {TEXT("Projector")}))
 		{
 			return TEXT("projector");
 		}
-		if (ContainsToken(ClassName, {TEXT("ObjectGroup")}) || ContainsToken(Title, {TEXT("Object Group")}))
+		if (ContainsMutableToken(ClassName, {TEXT("ObjectGroup")}) || ContainsMutableToken(Title, {TEXT("Object Group")}))
 		{
 			return TEXT("object_group");
 		}
-		if (ContainsToken(ClassName, {TEXT("Table")}) || ContainsToken(Title, {TEXT("Table")}))
+		if (ContainsMutableToken(ClassName, {TEXT("Table")}) || ContainsMutableToken(Title, {TEXT("Table")}))
 		{
 			return TEXT("table");
 		}
-		if (ContainsToken(ClassName, {TEXT("Output")}) || ContainsToken(Title, {TEXT("Output")}))
+		if (ContainsMutableToken(ClassName, {TEXT("Output")}) || ContainsMutableToken(Title, {TEXT("Output")}))
 		{
 			return TEXT("output");
 		}
@@ -616,31 +616,31 @@ namespace
 
 	static FString DeriveParameterType(const FString& ClassName, const FString& Title)
 	{
-		if (ContainsToken(ClassName, {TEXT("Bool")}) || ContainsToken(Title, {TEXT("Bool"), TEXT("Toggle")}))
+		if (ContainsMutableToken(ClassName, {TEXT("Bool")}) || ContainsMutableToken(Title, {TEXT("Bool"), TEXT("Toggle")}))
 		{
 			return TEXT("bool");
 		}
-		if (ContainsToken(ClassName, {TEXT("Int")}) || ContainsToken(Title, {TEXT("Int")}))
+		if (ContainsMutableToken(ClassName, {TEXT("Int")}) || ContainsMutableToken(Title, {TEXT("Int")}))
 		{
 			return TEXT("int");
 		}
-		if (ContainsToken(ClassName, {TEXT("Float"), TEXT("Scalar")}) || ContainsToken(Title, {TEXT("Float"), TEXT("Scalar")}))
+		if (ContainsMutableToken(ClassName, {TEXT("Float"), TEXT("Scalar")}) || ContainsMutableToken(Title, {TEXT("Float"), TEXT("Scalar")}))
 		{
 			return TEXT("float");
 		}
-		if (ContainsToken(ClassName, {TEXT("Color")}) || ContainsToken(Title, {TEXT("Color")}))
+		if (ContainsMutableToken(ClassName, {TEXT("Color")}) || ContainsMutableToken(Title, {TEXT("Color")}))
 		{
 			return TEXT("color");
 		}
-		if (ContainsToken(ClassName, {TEXT("Projector")}) || ContainsToken(Title, {TEXT("Projector")}))
+		if (ContainsMutableToken(ClassName, {TEXT("Projector")}) || ContainsMutableToken(Title, {TEXT("Projector")}))
 		{
 			return TEXT("projector");
 		}
-		if (ContainsToken(ClassName, {TEXT("Texture"), TEXT("Image")}) || ContainsToken(Title, {TEXT("Texture"), TEXT("Image")}))
+		if (ContainsMutableToken(ClassName, {TEXT("Texture"), TEXT("Image")}) || ContainsMutableToken(Title, {TEXT("Texture"), TEXT("Image")}))
 		{
 			return TEXT("texture");
 		}
-		if (ContainsToken(ClassName, {TEXT("Enum")}) || ContainsToken(Title, {TEXT("Enum")}))
+		if (ContainsMutableToken(ClassName, {TEXT("Enum")}) || ContainsMutableToken(Title, {TEXT("Enum")}))
 		{
 			return TEXT("enum");
 		}
@@ -652,23 +652,23 @@ namespace
 		const FString CombinedHints = ClassName + TEXT(" ") + Title + TEXT(" ") + FirstStringField(
 			Properties,
 			{TEXT("GroupType"), TEXT("Behavior"), TEXT("ParamType"), TEXT("ParameterType")});
-		if (ContainsToken(CombinedHints, {TEXT("OneOrNone")}))
+		if (ContainsMutableToken(CombinedHints, {TEXT("OneOrNone")}))
 		{
 			return TEXT("one_or_none");
 		}
-		if (ContainsToken(CombinedHints, {TEXT("Toggle"), TEXT("Bool")}))
+		if (ContainsMutableToken(CombinedHints, {TEXT("Toggle"), TEXT("Bool")}))
 		{
 			return TEXT("toggle");
 		}
-		if (ContainsToken(CombinedHints, {TEXT("Overlay")}))
+		if (ContainsMutableToken(CombinedHints, {TEXT("Overlay")}))
 		{
 			return TEXT("overlay");
 		}
-		if (ContainsToken(CombinedHints, {TEXT("Projector")}))
+		if (ContainsMutableToken(CombinedHints, {TEXT("Projector")}))
 		{
 			return TEXT("projector");
 		}
-		if (ContainsToken(CombinedHints, {TEXT("Group"), TEXT("Slot")}))
+		if (ContainsMutableToken(CombinedHints, {TEXT("Group"), TEXT("Slot")}))
 		{
 			return TEXT("slot");
 		}
@@ -797,11 +797,11 @@ TSharedPtr<FJsonObject> MutableIntrospectionUtils::BuildMutableParameterResult(c
 			if (const TSharedPtr<FJsonObject>* ConnectedNode = GraphData.NodeByPath.Find(ConnectedPath))
 			{
 				const FString ConnectedClass = (*ConnectedNode)->GetStringField(TEXT("class"));
-				if (ContainsToken(ConnectedClass, {TEXT("Compatible"), TEXT("Constraint")}))
+				if (ContainsMutableToken(ConnectedClass, {TEXT("Compatible"), TEXT("Constraint")}))
 				{
 					AddUniqueString(CompatibilityLinks, ConnectedPath);
 				}
-				if (ContainsToken(ConnectedClass, {TEXT("Exclusive"), TEXT("Incompatible")}))
+				if (ContainsMutableToken(ConnectedClass, {TEXT("Exclusive"), TEXT("Incompatible")}))
 				{
 					AddUniqueString(ExclusivityLinks, ConnectedPath);
 				}

@@ -78,6 +78,29 @@ void ARiftEnemyBase::SetOwningRoom(ARiftRoomManager* InRoomManager)
     OwningRoomManager = InRoomManager;
 }
 
+void ARiftEnemyBase::ConfigureEnemy(float NewMaxHealth, float NewMoveSpeed, float NewAttackDamage, float NewAttackCooldown, FVector NewVisualScale)
+{
+    if (!HasAuthority())
+    {
+        return;
+    }
+
+    MoveSpeed = FMath::Max(50.0f, NewMoveSpeed);
+    AttackDamage = FMath::Max(0.0f, NewAttackDamage);
+    AttackCooldown = FMath::Max(0.1f, NewAttackCooldown);
+    GetCharacterMovement()->MaxWalkSpeed = MoveSpeed;
+
+    if (HealthComponent)
+    {
+        HealthComponent->SetMaxHealth(NewMaxHealth, true);
+    }
+
+    if (VisualMesh)
+    {
+        VisualMesh->SetRelativeScale3D(NewVisualScale);
+    }
+}
+
 APawn* ARiftEnemyBase::FindTargetPawn() const
 {
     UWorld* World = GetWorld();

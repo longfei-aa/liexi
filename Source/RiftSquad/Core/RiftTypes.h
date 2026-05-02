@@ -14,3 +14,13 @@ enum class ERiftRoomPhase : uint8
     ExitReady,
     Completed
 };
+
+UENUM(BlueprintType)
+enum class ERiftRunPhase : uint8
+{
+    Setup,
+    Combat,
+    Reward,
+    Victory,
+    Defeat
+};

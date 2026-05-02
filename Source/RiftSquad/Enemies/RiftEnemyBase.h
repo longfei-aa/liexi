@@ -21,6 +21,9 @@ public:
 
     void SetOwningRoom(ARiftRoomManager* InRoomManager);
 
+    UFUNCTION(BlueprintCallable, Category = "Rift|Enemy")
+    void ConfigureEnemy(float NewMaxHealth, float NewMoveSpeed, float NewAttackDamage, float NewAttackCooldown, FVector NewVisualScale);
+
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rift|Components")
     TObjectPtr<URiftHealthComponent> HealthComponent;

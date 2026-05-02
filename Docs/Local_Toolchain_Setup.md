@@ -8,6 +8,7 @@ Checked on 2026-05-02:
 - Xcode is installed at `/Applications/Xcode.app`.
 - `xcode-select -p` points to `/Applications/Xcode.app/Contents/Developer`.
 - `xcodebuild -version` returns `Xcode 26.4.1`.
+- Unreal Engine 5.6 rejects Xcode 26.4.1 for Mac builds because UE 5.6 accepts Apple SDK versions from `15.2.0` to `16.9.0`.
 - `mas` is installed, but App Store CLI access is unreliable in the current CN store region.
 - Epic Games Launcher is installed at `/Applications/Epic Games Launcher.app`.
 - `UnrealEditor.app` was not found under `/Applications` or `/Users/Shared/Epic Games`.
@@ -18,8 +19,53 @@ Checked on 2026-05-02:
 Install these before C++ compilation and PIE testing:
 
 - Unreal Engine 5.6 from Epic Games Launcher.
+- Xcode 16.4 or another Xcode version in UE 5.6's accepted range.
 
 The project currently targets UE 5.6 in `RiftSquad.uproject`.
+
+## Xcode Compatibility For UE 5.6
+
+UE 5.6's installed SDK configuration reports:
+
+```text
+MinRequired=15.2.0
+MaxRequired=16.9.0
+```
+
+If `xcodebuild -version` reports Xcode `26.x`, UnrealBuildTool will fail with:
+
+```text
+Unable to find valid SDK(s) for Mac:
+Found Sdk Version=26.4.1, MinRequired=15.2.0, MaxRequired=16.9.0.
+Platform Mac is not a valid platform to build.
+```
+
+Install Xcode 16.4 alongside the current Xcode:
+
+```bash
+brew install xcodes
+xcodes install 16.4 --select --experimental-unxip
+```
+
+The `xcodes install` command requires Apple authentication. If command-line authentication fails, download Xcode 16.4 manually from Apple Developer Downloads, then install from the local `.xip`:
+
+```bash
+xcodes install 16.4 --path /path/to/Xcode_16.4.xip --select --experimental-unxip
+```
+
+After installation, verify:
+
+```bash
+xcodebuild -version
+xcrun --sdk macosx --show-sdk-version
+```
+
+Expected:
+
+```text
+Xcode 16.4
+<macOS SDK version accepted by UE 5.6>
+```
 
 ## Unreal Install Options On macOS
 

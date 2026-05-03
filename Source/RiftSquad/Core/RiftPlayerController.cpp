@@ -22,6 +22,7 @@ void ARiftPlayerController::SetupInputComponent()
         return;
     }
 
+    InputComponent->BindAction(TEXT("StartRun"), IE_Pressed, this, &ARiftPlayerController::StartRun);
     InputComponent->BindAction(TEXT("RewardOne"), IE_Pressed, this, &ARiftPlayerController::SelectRewardOne);
     InputComponent->BindAction(TEXT("RewardTwo"), IE_Pressed, this, &ARiftPlayerController::SelectRewardTwo);
     InputComponent->BindAction(TEXT("RewardThree"), IE_Pressed, this, &ARiftPlayerController::SelectRewardThree);
@@ -44,6 +45,26 @@ void ARiftPlayerController::ServerSelectReward_Implementation(int32 OptionIndex)
         It->SelectRewardForPlayer(this, OptionIndex);
         return;
     }
+}
+
+void ARiftPlayerController::ServerStartRun_Implementation()
+{
+    UWorld* World = GetWorld();
+    if (!World)
+    {
+        return;
+    }
+
+    for (TActorIterator<ARiftRoomManager> It(World); It; ++It)
+    {
+        It->StartRun();
+        return;
+    }
+}
+
+void ARiftPlayerController::StartRun()
+{
+    ServerStartRun();
 }
 
 void ARiftPlayerController::SelectRewardOne()

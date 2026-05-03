@@ -213,7 +213,16 @@ void ARiftCombatHUD::DrawHUD()
         }
     }
 
-    if (RunPhase == ERiftRunPhase::Victory)
+    if (RunPhase == ERiftRunPhase::Setup)
+    {
+        DrawPanel(CanvasW * 0.5f - 360.0f, CanvasH * 0.5f - 130.0f, 720.0f, 260.0f, FLinearColor(0.01f, 0.018f, 0.03f, 0.92f), Accent);
+        DrawCenteredText(TEXT("RIFT SQUAD"), CanvasH * 0.5f - 98.0f, Accent, MediumFont, 2.25f);
+        DrawCenteredText(TEXT("2-4 player co-op roguelite combat prototype"), CanvasH * 0.5f - 42.0f, FLinearColor(0.82f, 0.9f, 0.96f, 1.0f), SmallFont, 1.15f);
+        DrawCenteredText(TEXT("Clear rooms, choose upgrades, take supply, defeat the rift core."), CanvasH * 0.5f - 10.0f, FLinearColor::White, SmallFont, 1.0f);
+        DrawCenteredText(TEXT("Press ENTER to deploy"), CanvasH * 0.5f + 48.0f, FLinearColor(1.0f, 0.82f, 0.36f, 1.0f), MediumFont, 1.25f);
+        DrawCenteredText(TEXT("WASD move   Mouse aim   LMB fire   Q/RMB shockwave   Space dash"), CanvasH * 0.5f + 88.0f, FLinearColor(0.65f, 0.74f, 0.8f, 1.0f), SmallFont, 0.95f);
+    }
+    else if (RunPhase == ERiftRunPhase::Victory)
     {
         DrawPanel(CanvasW * 0.5f - 310.0f, CanvasH * 0.5f - 70.0f, 620.0f, 140.0f, FLinearColor(0.02f, 0.06f, 0.035f, 0.9f), Accent);
         DrawCenteredText(TEXT("VICTORY"), CanvasH * 0.5f - 42.0f, Accent, MediumFont, 2.0f);

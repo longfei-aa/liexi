@@ -17,7 +17,7 @@ ARiftRoomManager::ARiftRoomManager()
     PrimaryActorTick.bCanEverTick = false;
     bReplicates = true;
 
-    bAutoStart = true;
+    bAutoStart = false;
     EnemyClass = ARiftEnemyBase::StaticClass();
     RoomPhase = ERiftRoomPhase::Idle;
     AliveEnemyCount = 0;
@@ -79,9 +79,18 @@ void ARiftRoomManager::BeginPlay()
 {
     Super::BeginPlay();
 
-    if (HasAuthority() && bAutoStart)
+    if (!HasAuthority())
+    {
+        return;
+    }
+
+    if (bAutoStart)
     {
         StartRun();
+    }
+    else
+    {
+        UpdateGameState();
     }
 }
 
@@ -96,7 +105,7 @@ void ARiftRoomManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 
 void ARiftRoomManager::StartRun()
 {
-    if (!HasAuthority())
+    if (!HasAuthority() || (RoomPhase != ERiftRoomPhase::Idle && RoomPhase != ERiftRoomPhase::Completed))
     {
         return;
     }

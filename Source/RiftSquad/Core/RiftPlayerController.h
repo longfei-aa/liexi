@@ -20,9 +20,13 @@ public:
     UFUNCTION(Server, Reliable)
     void ServerSelectReward(int32 OptionIndex);
 
+    UFUNCTION(Server, Reliable)
+    void ServerStartRun();
+
 protected:
     virtual void SetupInputComponent() override;
 
+    void StartRun();
     void SelectRewardOne();
     void SelectRewardTwo();
     void SelectRewardThree();

@@ -66,6 +66,9 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Rift|Run")
     void MarkRunDefeated();
 
+    UFUNCTION(BlueprintCallable, Category = "Rift|Run")
+    void ReturnToTitle();
+
     UFUNCTION(BlueprintCallable, Category = "Rift|Room")
     void StartRoom();
 

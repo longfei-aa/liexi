@@ -36,6 +36,7 @@ In Unreal Editor:
 10. Choose rewards with `1`, `2`, or `3`.
 11. Choose the supply option after the elite room with `1`, `2`, or `3`.
 12. Press `Enter` on victory/defeat to restart the run.
+13. Press `Esc` during a run to pause, resume, restart, return to title, or quit.
 
 Use `Selected Viewport` or `New Editor Window`. Do not use `Simulate` for the demo.
 
@@ -44,6 +45,7 @@ Use `Selected Viewport` or `New Editor Window`. Do not use `Simulate` for the de
 - Top-down combat camera.
 - Runtime arena fallback with floor, walls, and lighting.
 - Keyboard title menu before the run starts: Start Demo, Host Game placeholder, Join Game placeholder, Settings placeholder, Quit.
+- Pause menu during the run: Resume, Restart Run, Return To Title, Quit.
 - Player cylinder, enemy cones, projectile spheres.
 - Five-room combat route with final boss room.
 - Supply node after the elite room, using recovery/mobility/cooldown options before the boss.
@@ -76,4 +78,4 @@ Recommended next tasks:
 2. Add player-side feedback: short screen shake, damage vignette, or controller rumble.
 3. Add simple SFX for fire, hit, reward, victory, defeat.
 4. Convert the Canvas HUD into UMG once the display information is stable.
-5. Convert the keyboard title menu into a UMG main menu with real host/join/settings buttons.
+5. Convert the keyboard title and pause menus into UMG with real host/join/settings buttons.

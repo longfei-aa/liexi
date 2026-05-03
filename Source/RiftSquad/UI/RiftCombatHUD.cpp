@@ -214,9 +214,10 @@ void ARiftCombatHUD::DrawHUD()
         }
     }
 
+    const ARiftPlayerController* RiftPlayerController = Cast<ARiftPlayerController>(PlayerOwner);
+
     if (RunPhase == ERiftRunPhase::Setup)
     {
-        const ARiftPlayerController* RiftPlayerController = Cast<ARiftPlayerController>(PlayerOwner);
         const int32 SelectedOption = RiftPlayerController ? RiftPlayerController->GetMainMenuSelectionIndex() : 0;
         const FString MenuStatus = RiftPlayerController ? RiftPlayerController->GetMenuStatusMessage() : TEXT("Select an option with Up/Down, confirm with Enter.");
         const TArray<FString> MenuOptions = {
@@ -255,6 +256,33 @@ void ARiftCombatHUD::DrawHUD()
         DrawPanel(CanvasW * 0.5f - 310.0f, CanvasH * 0.5f - 70.0f, 620.0f, 140.0f, FLinearColor(0.08f, 0.015f, 0.02f, 0.9f), Accent);
         DrawCenteredText(TEXT("DEFEAT"), CanvasH * 0.5f - 42.0f, Accent, MediumFont, 2.0f);
         DrawCenteredText(TEXT("Squad wiped. Press ENTER to retry."), CanvasH * 0.5f + 18.0f, FLinearColor::White, SmallFont, 1.0f);
+    }
+
+    if (RiftPlayerController && RiftPlayerController->IsPauseMenuOpen())
+    {
+        const TArray<FString> PauseOptions = {
+            TEXT("Resume"),
+            TEXT("Restart Run"),
+            TEXT("Return To Title"),
+            TEXT("Quit")
+        };
+        const int32 SelectedPauseOption = RiftPlayerController->GetPauseMenuSelectionIndex();
+
+        DrawRect(FLinearColor(0.0f, 0.0f, 0.0f, 0.45f), 0.0f, 0.0f, CanvasW, CanvasH);
+        DrawPanel(CanvasW * 0.5f - 300.0f, CanvasH * 0.5f - 165.0f, 600.0f, 330.0f, FLinearColor(0.012f, 0.02f, 0.032f, 0.96f), FLinearColor(0.85f, 0.92f, 1.0f, 1.0f));
+        DrawCenteredText(TEXT("PAUSED"), CanvasH * 0.5f - 132.0f, FLinearColor(0.85f, 0.92f, 1.0f, 1.0f), MediumFont, 1.8f);
+
+        float PauseY = CanvasH * 0.5f - 66.0f;
+        for (int32 OptionIndex = 0; OptionIndex < PauseOptions.Num(); ++OptionIndex)
+        {
+            const bool bSelected = OptionIndex == SelectedPauseOption;
+            const FLinearColor OptionColor = bSelected ? FLinearColor(1.0f, 0.82f, 0.36f, 1.0f) : FLinearColor(0.78f, 0.87f, 0.94f, 1.0f);
+            const FString OptionText = FString::Printf(TEXT("%s %s"), bSelected ? TEXT(">") : TEXT(" "), *PauseOptions[OptionIndex]);
+            DrawCenteredText(OptionText, PauseY, OptionColor, MediumFont, bSelected ? 1.22f : 1.0f);
+            PauseY += 44.0f;
+        }
+
+        DrawCenteredText(TEXT("Up/Down select   Enter confirm   Esc resume"), CanvasH * 0.5f + 120.0f, FLinearColor(0.56f, 0.66f, 0.76f, 1.0f), SmallFont, 0.9f);
     }
 }
 

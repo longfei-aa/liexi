@@ -105,8 +105,7 @@ void ARiftRoomManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 
 void ARiftRoomManager::StartRun()
 {
-    if (!HasAuthority() ||
-        (RoomPhase != ERiftRoomPhase::Idle && RoomPhase != ERiftRoomPhase::Completed && RoomPhase != ERiftRoomPhase::Failed))
+    if (!HasAuthority())
     {
         return;
     }
@@ -148,6 +147,30 @@ void ARiftRoomManager::MarkRunDefeated()
     CurrentRewardOptions.Empty();
     AliveEnemyCount = 0;
     RoomPhase = ERiftRoomPhase::Failed;
+    UpdateGameState();
+}
+
+void ARiftRoomManager::ReturnToTitle()
+{
+    if (!HasAuthority())
+    {
+        return;
+    }
+
+    for (ARiftEnemyBase* Enemy : ActiveEnemies)
+    {
+        if (IsValid(Enemy))
+        {
+            Enemy->Destroy();
+        }
+    }
+
+    ActiveEnemies.Empty();
+    CurrentRewardOptions.Empty();
+    AliveEnemyCount = 0;
+    CurrentRoomIndex = 0;
+    RoomPhase = ERiftRoomPhase::Idle;
+    ResetPlayersForRun();
     UpdateGameState();
 }
 

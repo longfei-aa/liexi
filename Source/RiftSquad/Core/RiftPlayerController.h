@@ -21,6 +21,12 @@ public:
     UFUNCTION(BlueprintPure, Category = "Rift|Menu")
     FString GetMenuStatusMessage() const { return MenuStatusMessage; }
 
+    UFUNCTION(BlueprintPure, Category = "Rift|Menu")
+    bool IsPauseMenuOpen() const { return bPauseMenuOpen; }
+
+    UFUNCTION(BlueprintPure, Category = "Rift|Menu")
+    int32 GetPauseMenuSelectionIndex() const { return PauseMenuSelectionIndex; }
+
     UFUNCTION(Server, Reliable)
     void ServerRequestInteract(AActor* TargetActor);
 
@@ -29,6 +35,9 @@ public:
 
     UFUNCTION(Server, Reliable)
     void ServerStartRun();
+
+    UFUNCTION(Server, Reliable)
+    void ServerReturnToTitle();
 
 protected:
     virtual void SetupInputComponent() override;
@@ -39,9 +48,16 @@ protected:
     UPROPERTY(BlueprintReadOnly, Category = "Rift|Menu")
     FString MenuStatusMessage;
 
+    UPROPERTY(BlueprintReadOnly, Category = "Rift|Menu")
+    bool bPauseMenuOpen;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Rift|Menu")
+    int32 PauseMenuSelectionIndex;
+
     void ConfirmMenuSelection();
     void SelectPreviousMenuOption();
     void SelectNextMenuOption();
+    void TogglePauseMenu();
     void SelectRewardOne();
     void SelectRewardTwo();
     void SelectRewardThree();

@@ -85,6 +85,7 @@ protected:
     void FireLegacy();
     void UseAbilityLegacy();
     void DashLegacy();
+    bool CanUseGameplayInput() const;
     FVector GetAimDirection() const;
 
     UFUNCTION()

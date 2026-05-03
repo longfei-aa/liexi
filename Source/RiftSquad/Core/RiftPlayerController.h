@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Core/RiftTypes.h"
 #include "GameFramework/PlayerController.h"
 #include "RiftPlayerController.generated.h"
 
@@ -14,6 +15,12 @@ public:
 
     virtual void BeginPlay() override;
 
+    UFUNCTION(BlueprintPure, Category = "Rift|Menu")
+    int32 GetMainMenuSelectionIndex() const { return MainMenuSelectionIndex; }
+
+    UFUNCTION(BlueprintPure, Category = "Rift|Menu")
+    FString GetMenuStatusMessage() const { return MenuStatusMessage; }
+
     UFUNCTION(Server, Reliable)
     void ServerRequestInteract(AActor* TargetActor);
 
@@ -26,8 +33,18 @@ public:
 protected:
     virtual void SetupInputComponent() override;
 
-    void StartRun();
+    UPROPERTY(BlueprintReadOnly, Category = "Rift|Menu")
+    int32 MainMenuSelectionIndex;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Rift|Menu")
+    FString MenuStatusMessage;
+
+    void ConfirmMenuSelection();
+    void SelectPreviousMenuOption();
+    void SelectNextMenuOption();
     void SelectRewardOne();
     void SelectRewardTwo();
     void SelectRewardThree();
+
+    ERiftRunPhase GetCurrentRunPhase() const;
 };

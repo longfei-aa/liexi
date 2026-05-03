@@ -5,6 +5,7 @@
 #include "Combat/RiftWeaponComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Core/RiftGameMode.h"
+#include "Core/RiftGameState.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -181,7 +182,7 @@ void ARiftPlayerCharacter::ResetForNewRun(const FVector& SpawnLocation)
 
 void ARiftPlayerCharacter::Move(const FInputActionValue& Value)
 {
-    if (HealthComponent && HealthComponent->IsDead())
+    if ((HealthComponent && HealthComponent->IsDead()) || !CanUseGameplayInput())
     {
         return;
     }
@@ -193,7 +194,7 @@ void ARiftPlayerCharacter::Move(const FInputActionValue& Value)
 
 void ARiftPlayerCharacter::Fire(const FInputActionValue& Value)
 {
-    if (HealthComponent && HealthComponent->IsDead())
+    if ((HealthComponent && HealthComponent->IsDead()) || !CanUseGameplayInput())
     {
         return;
     }
@@ -209,7 +210,7 @@ void ARiftPlayerCharacter::Fire(const FInputActionValue& Value)
 
 void ARiftPlayerCharacter::MoveForward(float Value)
 {
-    if (HealthComponent && HealthComponent->IsDead())
+    if ((HealthComponent && HealthComponent->IsDead()) || !CanUseGameplayInput())
     {
         return;
     }
@@ -219,7 +220,7 @@ void ARiftPlayerCharacter::MoveForward(float Value)
 
 void ARiftPlayerCharacter::MoveRight(float Value)
 {
-    if (HealthComponent && HealthComponent->IsDead())
+    if ((HealthComponent && HealthComponent->IsDead()) || !CanUseGameplayInput())
     {
         return;
     }
@@ -229,7 +230,7 @@ void ARiftPlayerCharacter::MoveRight(float Value)
 
 void ARiftPlayerCharacter::FireLegacy()
 {
-    if (HealthComponent && HealthComponent->IsDead())
+    if ((HealthComponent && HealthComponent->IsDead()) || !CanUseGameplayInput())
     {
         return;
     }
@@ -245,7 +246,7 @@ void ARiftPlayerCharacter::FireLegacy()
 
 void ARiftPlayerCharacter::UseAbilityLegacy()
 {
-    if ((HealthComponent && HealthComponent->IsDead()) || !AbilityComponent)
+    if ((HealthComponent && HealthComponent->IsDead()) || !AbilityComponent || !CanUseGameplayInput())
     {
         return;
     }
@@ -255,7 +256,7 @@ void ARiftPlayerCharacter::UseAbilityLegacy()
 
 void ARiftPlayerCharacter::DashLegacy()
 {
-    if ((HealthComponent && HealthComponent->IsDead()) || !AbilityComponent)
+    if ((HealthComponent && HealthComponent->IsDead()) || !AbilityComponent || !CanUseGameplayInput())
     {
         return;
     }
@@ -267,6 +268,18 @@ void ARiftPlayerCharacter::DashLegacy()
     }
 
     AbilityComponent->RequestDash(DashDirection);
+}
+
+bool ARiftPlayerCharacter::CanUseGameplayInput() const
+{
+    const ARiftGameState* RiftGameState = GetWorld() ? GetWorld()->GetGameState<ARiftGameState>() : nullptr;
+    if (!RiftGameState)
+    {
+        return true;
+    }
+
+    const ERiftRunPhase RunPhase = RiftGameState->GetCurrentRunPhase();
+    return RunPhase == ERiftRunPhase::Combat || RunPhase == ERiftRunPhase::Reward || RunPhase == ERiftRunPhase::Supply;
 }
 
 FVector ARiftPlayerCharacter::GetAimDirection() const

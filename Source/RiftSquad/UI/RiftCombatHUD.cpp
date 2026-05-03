@@ -4,6 +4,7 @@
 #include "Combat/RiftHealthComponent.h"
 #include "Combat/RiftWeaponComponent.h"
 #include "Core/RiftGameState.h"
+#include "Core/RiftPlayerController.h"
 #include "Engine/Canvas.h"
 #include "Engine/Engine.h"
 #include "Engine/Font.h"
@@ -215,12 +216,33 @@ void ARiftCombatHUD::DrawHUD()
 
     if (RunPhase == ERiftRunPhase::Setup)
     {
-        DrawPanel(CanvasW * 0.5f - 360.0f, CanvasH * 0.5f - 130.0f, 720.0f, 260.0f, FLinearColor(0.01f, 0.018f, 0.03f, 0.92f), Accent);
-        DrawCenteredText(TEXT("RIFT SQUAD"), CanvasH * 0.5f - 98.0f, Accent, MediumFont, 2.25f);
-        DrawCenteredText(TEXT("2-4 player co-op roguelite combat prototype"), CanvasH * 0.5f - 42.0f, FLinearColor(0.82f, 0.9f, 0.96f, 1.0f), SmallFont, 1.15f);
-        DrawCenteredText(TEXT("Clear rooms, choose upgrades, take supply, defeat the rift core."), CanvasH * 0.5f - 10.0f, FLinearColor::White, SmallFont, 1.0f);
-        DrawCenteredText(TEXT("Press ENTER to deploy"), CanvasH * 0.5f + 48.0f, FLinearColor(1.0f, 0.82f, 0.36f, 1.0f), MediumFont, 1.25f);
-        DrawCenteredText(TEXT("WASD move   Mouse aim   LMB fire   Q/RMB shockwave   Space dash"), CanvasH * 0.5f + 88.0f, FLinearColor(0.65f, 0.74f, 0.8f, 1.0f), SmallFont, 0.95f);
+        const ARiftPlayerController* RiftPlayerController = Cast<ARiftPlayerController>(PlayerOwner);
+        const int32 SelectedOption = RiftPlayerController ? RiftPlayerController->GetMainMenuSelectionIndex() : 0;
+        const FString MenuStatus = RiftPlayerController ? RiftPlayerController->GetMenuStatusMessage() : TEXT("Select an option with Up/Down, confirm with Enter.");
+        const TArray<FString> MenuOptions = {
+            TEXT("Start Demo"),
+            TEXT("Host Game"),
+            TEXT("Join Game"),
+            TEXT("Settings"),
+            TEXT("Quit")
+        };
+
+        DrawPanel(CanvasW * 0.5f - 390.0f, CanvasH * 0.5f - 210.0f, 780.0f, 420.0f, FLinearColor(0.01f, 0.018f, 0.03f, 0.94f), Accent);
+        DrawCenteredText(TEXT("RIFT SQUAD"), CanvasH * 0.5f - 178.0f, Accent, MediumFont, 2.35f);
+        DrawCenteredText(TEXT("2-4 player co-op roguelite combat prototype"), CanvasH * 0.5f - 122.0f, FLinearColor(0.82f, 0.9f, 0.96f, 1.0f), SmallFont, 1.15f);
+
+        float MenuY = CanvasH * 0.5f - 62.0f;
+        for (int32 OptionIndex = 0; OptionIndex < MenuOptions.Num(); ++OptionIndex)
+        {
+            const bool bSelected = OptionIndex == SelectedOption;
+            const FLinearColor OptionColor = bSelected ? FLinearColor(1.0f, 0.82f, 0.36f, 1.0f) : FLinearColor(0.78f, 0.87f, 0.94f, 1.0f);
+            const FString OptionText = FString::Printf(TEXT("%s %s"), bSelected ? TEXT(">") : TEXT(" "), *MenuOptions[OptionIndex]);
+            DrawCenteredText(OptionText, MenuY, OptionColor, MediumFont, bSelected ? 1.25f : 1.05f);
+            MenuY += 42.0f;
+        }
+
+        DrawCenteredText(MenuStatus, CanvasH * 0.5f + 160.0f, FLinearColor(0.65f, 0.76f, 0.84f, 1.0f), SmallFont, 0.95f);
+        DrawCenteredText(TEXT("Up/Down select   Enter confirm   Combat: WASD, Mouse, LMB, Q/RMB, Space"), CanvasH * 0.5f + 186.0f, FLinearColor(0.45f, 0.58f, 0.68f, 1.0f), SmallFont, 0.85f);
     }
     else if (RunPhase == ERiftRunPhase::Victory)
     {

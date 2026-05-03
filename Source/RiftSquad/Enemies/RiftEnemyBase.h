@@ -69,6 +69,8 @@ protected:
     float LastAttackTime;
     float SpawnTime;
     bool bExplosionTriggered;
+    FVector BaseVisualScale;
+    FTimerHandle HitFeedbackTimerHandle;
 
     APawn* FindTargetPawn() const;
     void TickChaser(APawn* TargetPawn, float Distance, FVector ToTarget);
@@ -79,7 +81,17 @@ protected:
     void TriggerExplosion(APawn* TargetPawn);
     void ExecuteExplosion();
     void ApplyVisualForType();
+    void ResetHitFeedback();
+
+    UFUNCTION()
+    void HandleHealthChanged(URiftHealthComponent* ChangedHealthComponent, float NewHealth, float Delta);
 
     UFUNCTION()
     void HandleDeath(URiftHealthComponent* DeadHealthComponent, AActor* DamageInstigator);
+
+    UFUNCTION(NetMulticast, Unreliable)
+    void MulticastPlayHitFeedback();
+
+    UFUNCTION(NetMulticast, Reliable)
+    void MulticastPlayDeathFeedback();
 };

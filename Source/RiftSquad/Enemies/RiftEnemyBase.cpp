@@ -43,6 +43,7 @@ ARiftEnemyBase::ARiftEnemyBase()
     LastAttackTime = -1000.0f;
     SpawnTime = 0.0f;
     bExplosionTriggered = false;
+    BaseVisualScale = FVector(0.5f, 0.5f, 0.8f);
 
     GetCharacterMovement()->MaxWalkSpeed = MoveSpeed;
 }
@@ -58,6 +59,7 @@ void ARiftEnemyBase::BeginPlay()
 
     if (HealthComponent)
     {
+        HealthComponent->OnHealthChanged.AddDynamic(this, &ARiftEnemyBase::HandleHealthChanged);
         HealthComponent->OnDeath.AddDynamic(this, &ARiftEnemyBase::HandleDeath);
     }
 }
@@ -348,6 +350,26 @@ void ARiftEnemyBase::ApplyVisualForType()
         default:
             break;
     }
+
+    BaseVisualScale = VisualMesh->GetRelativeScale3D();
+}
+
+void ARiftEnemyBase::ResetHitFeedback()
+{
+    if (!VisualMesh || bExplosionTriggered || (HealthComponent && HealthComponent->IsDead()))
+    {
+        return;
+    }
+
+    VisualMesh->SetRelativeScale3D(BaseVisualScale);
+}
+
+void ARiftEnemyBase::HandleHealthChanged(URiftHealthComponent* ChangedHealthComponent, float NewHealth, float Delta)
+{
+    if (HasAuthority() && Delta < -KINDA_SMALL_NUMBER && ChangedHealthComponent && !ChangedHealthComponent->IsDead())
+    {
+        MulticastPlayHitFeedback();
+    }
 }
 
 void ARiftEnemyBase::HandleDeath(URiftHealthComponent* DeadHealthComponent, AActor* DamageInstigator)
@@ -359,6 +381,7 @@ void ARiftEnemyBase::HandleDeath(URiftHealthComponent* DeadHealthComponent, AAct
 
     SetActorEnableCollision(false);
     GetCharacterMovement()->DisableMovement();
+    MulticastPlayDeathFeedback();
 
     if (OwningRoomManager)
     {
@@ -366,4 +389,28 @@ void ARiftEnemyBase::HandleDeath(URiftHealthComponent* DeadHealthComponent, AAct
     }
 
     SetLifeSpan(3.0f);
+}
+
+void ARiftEnemyBase::MulticastPlayHitFeedback_Implementation()
+{
+    if (!VisualMesh || bExplosionTriggered || (HealthComponent && HealthComponent->IsDead()))
+    {
+        return;
+    }
+
+    GetWorldTimerManager().ClearTimer(HitFeedbackTimerHandle);
+    VisualMesh->SetRelativeScale3D(BaseVisualScale * 1.18f);
+    GetWorldTimerManager().SetTimer(HitFeedbackTimerHandle, this, &ARiftEnemyBase::ResetHitFeedback, 0.08f, false);
+}
+
+void ARiftEnemyBase::MulticastPlayDeathFeedback_Implementation()
+{
+    if (!VisualMesh)
+    {
+        return;
+    }
+
+    GetWorldTimerManager().ClearTimer(HitFeedbackTimerHandle);
+    VisualMesh->SetRelativeScale3D(FVector(BaseVisualScale.X * 1.25f, BaseVisualScale.Y * 1.25f, BaseVisualScale.Z * 0.18f));
+    VisualMesh->SetRelativeLocation(FVector(0.0f, 0.0f, -68.0f));
 }

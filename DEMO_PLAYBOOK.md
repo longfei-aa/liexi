@@ -42,6 +42,7 @@ Use `Selected Viewport` or `New Editor Window`. Do not use `Simulate` for the de
 - Five-room combat route with final boss room.
 - Supply node after the elite room, using recovery/mobility/cooldown options before the boss.
 - Enemy variety: chaser, shooter, burster, and elite placeholder variants.
+- Placeholder combat feedback: enemies pulse on hit and flatten briefly on death.
 - Combat HUD with status, room progress, enemy count, HP, weapon stats, controls, objectives, rewards, victory, and defeat.
 - Assault-style active kit: basic fire, shockwave, and dash.
 - Server-authoritative reward selection path ready for later multiplayer testing.
@@ -65,7 +66,7 @@ Use these sources only after recording every imported asset in `Content/RiftSqua
 Recommended next tasks:
 
 1. Replace cylinder/cone/sphere placeholders with low-poly character, enemy, and projectile assets.
-2. Add hit feedback: flash, scale pulse, or short screen shake.
+2. Add player-side feedback: short screen shake, damage vignette, or controller rumble.
 3. Add simple SFX for fire, hit, reward, victory, defeat.
 4. Convert the Canvas HUD into UMG once the display information is stable.
 5. Add a title/menu screen before entering the combat map.

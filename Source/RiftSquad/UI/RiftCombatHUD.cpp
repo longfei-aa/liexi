@@ -8,6 +8,7 @@
 #include "Engine/Engine.h"
 #include "Engine/Font.h"
 #include "GameFramework/Pawn.h"
+#include "Items/RiftItemInventoryComponent.h"
 
 namespace
 {
@@ -63,6 +64,20 @@ namespace
                 return TEXT("Objective: prepare for deployment.");
         }
     }
+
+    FLinearColor RarityColor(ERiftItemRarity Rarity)
+    {
+        switch (Rarity)
+        {
+            case ERiftItemRarity::Rare:
+                return FLinearColor(0.25f, 0.62f, 1.0f, 1.0f);
+            case ERiftItemRarity::Legendary:
+                return FLinearColor(1.0f, 0.72f, 0.18f, 1.0f);
+            case ERiftItemRarity::Common:
+            default:
+                return FLinearColor(0.92f, 0.94f, 0.98f, 1.0f);
+        }
+    }
 }
 
 void ARiftCombatHUD::DrawHUD()
@@ -85,6 +100,7 @@ void ARiftCombatHUD::DrawHUD()
     const URiftHealthComponent* HealthComponent = Pawn ? Pawn->FindComponentByClass<URiftHealthComponent>() : nullptr;
     const URiftWeaponComponent* WeaponComponent = Pawn ? Pawn->FindComponentByClass<URiftWeaponComponent>() : nullptr;
     const URiftAbilityComponent* AbilityComponent = Pawn ? Pawn->FindComponentByClass<URiftAbilityComponent>() : nullptr;
+    const URiftItemInventoryComponent* InventoryComponent = Pawn ? Pawn->FindComponentByClass<URiftItemInventoryComponent>() : nullptr;
 
     const ERiftRunPhase RunPhase = RiftGameState ? RiftGameState->GetCurrentRunPhase() : ERiftRunPhase::Setup;
     const FLinearColor Accent = PhaseColor(RunPhase);
@@ -145,8 +161,13 @@ void ARiftCombatHUD::DrawHUD()
         DrawText(AbilityText, FLinearColor(1.0f, 0.82f, 0.36f, 1.0f), Safe + 22.0f, CanvasH - 78.0f, SmallFont, 1.0f);
     }
 
+    if (InventoryComponent)
+    {
+        DrawText(InventoryComponent->GetRecentItemSummary(3), FLinearColor(0.8f, 0.9f, 1.0f, 1.0f), Safe + 22.0f, CanvasH - 56.0f, SmallFont, 0.9f);
+    }
+
     const FString ControlsText = TEXT("WASD move   Mouse aim   LMB fire   RMB/Q shockwave   Space dash   1/2/3 reward");
-    DrawText(ControlsText, FLinearColor(0.65f, 0.74f, 0.8f, 1.0f), Safe + 22.0f, CanvasH - 49.0f, SmallFont, 0.9f);
+    DrawText(ControlsText, FLinearColor(0.65f, 0.74f, 0.8f, 1.0f), Safe + 22.0f, CanvasH - 32.0f, SmallFont, 0.9f);
 
     const FString Objective = ObjectiveText(RunPhase);
     const float ObjectiveW = 560.0f;
@@ -171,10 +192,11 @@ void ARiftCombatHUD::DrawHUD()
         for (int32 OptionIndex = 0; OptionIndex < RewardOptions.Num(); ++OptionIndex)
         {
             const FRiftRewardOption& Option = RewardOptions[OptionIndex];
-            DrawPanel(StartX, CardY, CardW, CardH, FLinearColor(0.02f, 0.03f, 0.045f, 0.9f), OptionIndex == 0 ? Accent : FLinearColor(0.24f, 0.32f, 0.4f, 1.0f));
+            const FLinearColor ItemColor = RarityColor(Option.Rarity);
+            DrawPanel(StartX, CardY, CardW, CardH, FLinearColor(0.02f, 0.03f, 0.045f, 0.9f), ItemColor);
 
             const FString KeyText = FString::Printf(TEXT("[%d]"), OptionIndex + 1);
-            DrawText(KeyText, Accent, StartX + 18.0f, CardY + 18.0f, MediumFont, 1.05f);
+            DrawText(KeyText, ItemColor, StartX + 18.0f, CardY + 18.0f, MediumFont, 1.05f);
             DrawText(Option.Name, FLinearColor::White, StartX + 76.0f, CardY + 22.0f, SmallFont, 1.0f);
             DrawText(Option.Description, FLinearColor(0.74f, 0.84f, 0.9f, 1.0f), StartX + 76.0f, CardY + 56.0f, SmallFont, 1.0f);
 

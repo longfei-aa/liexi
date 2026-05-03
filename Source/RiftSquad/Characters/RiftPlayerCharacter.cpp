@@ -8,6 +8,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Items/RiftItemInventoryComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "InputAction.h"
 #include "InputActionValue.h"
@@ -34,6 +35,7 @@ ARiftPlayerCharacter::ARiftPlayerCharacter()
     HealthComponent = CreateDefaultSubobject<URiftHealthComponent>(TEXT("HealthComponent"));
     WeaponComponent = CreateDefaultSubobject<URiftWeaponComponent>(TEXT("WeaponComponent"));
     AbilityComponent = CreateDefaultSubobject<URiftAbilityComponent>(TEXT("AbilityComponent"));
+    ItemInventoryComponent = CreateDefaultSubobject<URiftItemInventoryComponent>(TEXT("ItemInventoryComponent"));
 
     VisualMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("VisualMesh"));
     VisualMesh->SetupAttachment(RootComponent);

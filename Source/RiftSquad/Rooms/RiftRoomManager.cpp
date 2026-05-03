@@ -1,10 +1,9 @@
 #include "Rooms/RiftRoomManager.h"
 #include "Characters/RiftPlayerCharacter.h"
-#include "Combat/RiftHealthComponent.h"
-#include "Combat/RiftWeaponComponent.h"
 #include "Core/RiftGameState.h"
 #include "Core/RiftPlayerController.h"
 #include "Enemies/RiftEnemyBase.h"
+#include "Items/RiftItemInventoryComponent.h"
 #include "Net/UnrealNetwork.h"
 
 ARiftRoomManager::ARiftRoomManager()
@@ -265,11 +264,26 @@ void ARiftRoomManager::GenerateRewardOptions()
 
     const int32 RewardSeed = FMath::Max(1, CurrentRoomIndex);
     TArray<FRiftRewardOption> RewardPool;
-    RewardPool.Add(FRiftRewardOption(ERiftRewardType::WeaponDamage, 4.0f + RewardSeed, TEXT("Overcharged Rounds"), TEXT("+ weapon damage")));
-    RewardPool.Add(FRiftRewardOption(ERiftRewardType::FireRate, 0.85f, TEXT("Rapid Capacitor"), TEXT("15% faster fire rate")));
-    RewardPool.Add(FRiftRewardOption(ERiftRewardType::MaxHealth, 25.0f, TEXT("Alloy Plating"), TEXT("+ max HP and refill")));
-    RewardPool.Add(FRiftRewardOption(ERiftRewardType::Heal, 35.0f, TEXT("Field Repair"), TEXT("restore HP")));
-    RewardPool.Add(FRiftRewardOption(ERiftRewardType::MoveSpeed, 1.12f, TEXT("Phase Boots"), TEXT("+ movement speed")));
+    auto MakeItem = [](FName ItemId, ERiftItemRarity Rarity, ERiftRewardType Type, float Magnitude, const TCHAR* Name, const TCHAR* Description)
+    {
+        FRiftRewardOption Option(Type, Magnitude, Name, Description);
+        Option.ItemId = ItemId;
+        Option.Rarity = Rarity;
+        return Option;
+    };
+
+    RewardPool.Add(MakeItem(TEXT("ITEM_OverloadCapacitor"), ERiftItemRarity::Common, ERiftRewardType::WeaponDamage, 5.0f + RewardSeed, TEXT("Overload Capacitor"), TEXT("+ weapon damage")));
+    RewardPool.Add(MakeItem(TEXT("ITEM_RapidCoil"), ERiftItemRarity::Common, ERiftRewardType::FireRate, 0.88f, TEXT("Rapid Coil"), TEXT("12% faster fire rate")));
+    RewardPool.Add(MakeItem(TEXT("ITEM_RiftPlate"), ERiftItemRarity::Common, ERiftRewardType::MaxHealth, 25.0f, TEXT("Rift Plate"), TEXT("+ max HP and refill")));
+    RewardPool.Add(MakeItem(TEXT("ITEM_FieldRepair"), ERiftItemRarity::Common, ERiftRewardType::Heal, 45.0f, TEXT("Field Repair"), TEXT("restore HP")));
+    RewardPool.Add(MakeItem(TEXT("ITEM_LightBoots"), ERiftItemRarity::Common, ERiftRewardType::MoveSpeed, 1.10f, TEXT("Light Boots"), TEXT("+ movement speed")));
+    RewardPool.Add(MakeItem(TEXT("ITEM_CooldownCore"), ERiftItemRarity::Rare, ERiftRewardType::SkillCooldown, 0.88f, TEXT("Cooldown Core"), TEXT("12% faster skill cooldowns")));
+    RewardPool.Add(MakeItem(TEXT("ITEM_ShockAmplifier"), ERiftItemRarity::Rare, ERiftRewardType::ShockwaveDamage, 12.0f, TEXT("Shock Amplifier"), TEXT("+ shockwave damage")));
+    RewardPool.Add(MakeItem(TEXT("ITEM_DiffusionModule"), ERiftItemRarity::Rare, ERiftRewardType::ShockwaveRadius, 1.18f, TEXT("Diffusion Module"), TEXT("+ shockwave radius")));
+    RewardPool.Add(MakeItem(TEXT("ITEM_HeavyRounds"), ERiftItemRarity::Rare, ERiftRewardType::WeaponDamage, 10.0f, TEXT("Heavy Rounds"), TEXT("large weapon damage boost")));
+    RewardPool.Add(MakeItem(TEXT("ITEM_CombatInjector"), ERiftItemRarity::Rare, ERiftRewardType::MoveSpeed, 1.18f, TEXT("Combat Injector"), TEXT("large movement speed boost")));
+    RewardPool.Add(MakeItem(TEXT("ITEM_RiftBattery"), ERiftItemRarity::Legendary, ERiftRewardType::FireRate, 0.72f, TEXT("Rift Battery"), TEXT("massive fire rate boost")));
+    RewardPool.Add(MakeItem(TEXT("ITEM_CoreResonator"), ERiftItemRarity::Legendary, ERiftRewardType::ShockwaveDamage, 28.0f, TEXT("Core Resonator"), TEXT("massive shockwave damage")));
 
     for (int32 OptionIndex = 0; OptionIndex < 3 && RewardPool.Num() > 0; ++OptionIndex)
     {
@@ -287,40 +301,9 @@ void ARiftRoomManager::ApplyRewardToPlayer(ARiftPlayerController* PlayerControll
         return;
     }
 
-    URiftHealthComponent* HealthComponent = PlayerCharacter->GetHealthComponent();
-    URiftWeaponComponent* WeaponComponent = PlayerCharacter->GetWeaponComponent();
-
-    switch (RewardOption.Type)
+    if (URiftItemInventoryComponent* InventoryComponent = PlayerCharacter->GetItemInventoryComponent())
     {
-        case ERiftRewardType::WeaponDamage:
-            if (WeaponComponent)
-            {
-                WeaponComponent->AddDamage(RewardOption.Magnitude);
-            }
-            break;
-        case ERiftRewardType::FireRate:
-            if (WeaponComponent)
-            {
-                WeaponComponent->MultiplyFireInterval(RewardOption.Magnitude);
-            }
-            break;
-        case ERiftRewardType::MaxHealth:
-            if (HealthComponent)
-            {
-                HealthComponent->SetMaxHealth(HealthComponent->GetMaxHealth() + RewardOption.Magnitude, true);
-            }
-            break;
-        case ERiftRewardType::Heal:
-            if (HealthComponent)
-            {
-                HealthComponent->Heal(RewardOption.Magnitude);
-            }
-            break;
-        case ERiftRewardType::MoveSpeed:
-            PlayerCharacter->MultiplyMoveSpeed(RewardOption.Magnitude);
-            break;
-        default:
-            break;
+        InventoryComponent->ApplyRewardOption(RewardOption);
     }
 
     if (ARiftGameState* RiftGameState = GetWorld() ? GetWorld()->GetGameState<ARiftGameState>() : nullptr)

@@ -11,6 +11,7 @@ class UStaticMeshComponent;
 class USpringArmComponent;
 class URiftAbilityComponent;
 class URiftHealthComponent;
+class URiftItemInventoryComponent;
 class URiftWeaponComponent;
 struct FInputActionValue;
 
@@ -34,6 +35,9 @@ public:
     UFUNCTION(BlueprintPure, Category = "Rift|Components")
     URiftAbilityComponent* GetAbilityComponent() const { return AbilityComponent; }
 
+    UFUNCTION(BlueprintPure, Category = "Rift|Components")
+    URiftItemInventoryComponent* GetItemInventoryComponent() const { return ItemInventoryComponent; }
+
     UFUNCTION(BlueprintCallable, Category = "Rift|Stats")
     void MultiplyMoveSpeed(float Multiplier);
 
@@ -55,6 +59,9 @@ protected:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rift|Components")
     TObjectPtr<URiftAbilityComponent> AbilityComponent;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rift|Components")
+    TObjectPtr<URiftItemInventoryComponent> ItemInventoryComponent;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rift|Visual")
     TObjectPtr<UStaticMeshComponent> VisualMesh;

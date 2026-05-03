@@ -94,6 +94,40 @@ float URiftAbilityComponent::GetDashCooldownRemaining() const
     return FMath::Max(0.0f, DashCooldown - (World->GetTimeSeconds() - LastDashTime));
 }
 
+void URiftAbilityComponent::MultiplyCooldowns(float Multiplier)
+{
+    AActor* Owner = GetOwner();
+    if (!Owner || !Owner->HasAuthority())
+    {
+        return;
+    }
+
+    ShockwaveCooldown = FMath::Clamp(ShockwaveCooldown * Multiplier, 1.0f, 20.0f);
+    DashCooldown = FMath::Clamp(DashCooldown * Multiplier, 0.5f, 12.0f);
+}
+
+void URiftAbilityComponent::AddShockwaveDamage(float BonusDamage)
+{
+    AActor* Owner = GetOwner();
+    if (!Owner || !Owner->HasAuthority())
+    {
+        return;
+    }
+
+    ShockwaveDamage = FMath::Max(1.0f, ShockwaveDamage + BonusDamage);
+}
+
+void URiftAbilityComponent::MultiplyShockwaveRadius(float Multiplier)
+{
+    AActor* Owner = GetOwner();
+    if (!Owner || !Owner->HasAuthority())
+    {
+        return;
+    }
+
+    ShockwaveRadius = FMath::Clamp(ShockwaveRadius * Multiplier, 120.0f, 900.0f);
+}
+
 void URiftAbilityComponent::ServerRequestShockwave_Implementation(FVector_NetQuantize Origin)
 {
     ExecuteShockwave(Origin);

@@ -28,6 +28,15 @@ public:
     UFUNCTION(BlueprintPure, Category = "Rift|Ability")
     float GetDashCooldownRemaining() const;
 
+    UFUNCTION(BlueprintCallable, Category = "Rift|Ability")
+    void MultiplyCooldowns(float Multiplier);
+
+    UFUNCTION(BlueprintCallable, Category = "Rift|Ability")
+    void AddShockwaveDamage(float BonusDamage);
+
+    UFUNCTION(BlueprintCallable, Category = "Rift|Ability")
+    void MultiplyShockwaveRadius(float Multiplier);
+
 protected:
     UPROPERTY(EditDefaultsOnly, Replicated, BlueprintReadOnly, Category = "Rift|Ability")
     float ShockwaveDamage;

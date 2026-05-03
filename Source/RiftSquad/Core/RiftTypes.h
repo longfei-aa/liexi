@@ -33,7 +33,18 @@ enum class ERiftRewardType : uint8
     FireRate,
     MaxHealth,
     Heal,
-    MoveSpeed
+    MoveSpeed,
+    SkillCooldown,
+    ShockwaveDamage,
+    ShockwaveRadius
+};
+
+UENUM(BlueprintType)
+enum class ERiftItemRarity : uint8
+{
+    Common,
+    Rare,
+    Legendary
 };
 
 UENUM(BlueprintType)
@@ -52,12 +63,16 @@ struct FRiftRewardOption
 
     FRiftRewardOption()
         : Type(ERiftRewardType::None)
+        , ItemId(NAME_None)
+        , Rarity(ERiftItemRarity::Common)
         , Magnitude(0.0f)
     {
     }
 
     FRiftRewardOption(ERiftRewardType InType, float InMagnitude, const FString& InName, const FString& InDescription)
         : Type(InType)
+        , ItemId(NAME_None)
+        , Rarity(ERiftItemRarity::Common)
         , Magnitude(InMagnitude)
         , Name(InName)
         , Description(InDescription)
@@ -66,6 +81,12 @@ struct FRiftRewardOption
 
     UPROPERTY(BlueprintReadOnly, Category = "Rift|Reward")
     ERiftRewardType Type;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Rift|Reward")
+    FName ItemId;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Rift|Reward")
+    ERiftItemRarity Rarity;
 
     UPROPERTY(BlueprintReadOnly, Category = "Rift|Reward")
     float Magnitude;

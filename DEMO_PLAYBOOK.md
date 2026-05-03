@@ -38,6 +38,7 @@ Use `Selected Viewport` or `New Editor Window`. Do not use `Simulate` for the de
 - Runtime arena fallback with floor, walls, and lighting.
 - Player cylinder, enemy cones, projectile spheres.
 - Five-room combat route with final boss room.
+- Enemy variety: chaser, shooter, burster, and elite placeholder variants.
 - Combat HUD with status, room progress, enemy count, HP, weapon stats, controls, objectives, rewards, victory, and defeat.
 - Assault-style active kit: basic fire, shockwave, and dash.
 - Server-authoritative reward selection path ready for later multiplayer testing.

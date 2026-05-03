@@ -36,6 +36,15 @@ enum class ERiftRewardType : uint8
     MoveSpeed
 };
 
+UENUM(BlueprintType)
+enum class ERiftEnemyType : uint8
+{
+    Chaser,
+    Shooter,
+    Burster,
+    Elite
+};
+
 USTRUCT(BlueprintType)
 struct FRiftRewardOption
 {

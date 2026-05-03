@@ -1,10 +1,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Core/RiftTypes.h"
 #include "GameFramework/Character.h"
 #include "RiftEnemyBase.generated.h"
 
 class ARiftRoomManager;
+class ARiftProjectile;
 class URiftHealthComponent;
 class UStaticMeshComponent;
 
@@ -22,7 +24,7 @@ public:
     void SetOwningRoom(ARiftRoomManager* InRoomManager);
 
     UFUNCTION(BlueprintCallable, Category = "Rift|Enemy")
-    void ConfigureEnemy(float NewMaxHealth, float NewMoveSpeed, float NewAttackDamage, float NewAttackCooldown, FVector NewVisualScale);
+    void ConfigureEnemy(ERiftEnemyType NewEnemyType, float NewMaxHealth, float NewMoveSpeed, float NewAttackDamage, float NewAttackCooldown, FVector NewVisualScale);
 
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rift|Components")
@@ -46,14 +48,37 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rift|Enemy")
     float ActivationDelay;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rift|Enemy")
+    float PreferredRange;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rift|Enemy")
+    float ExplosionRadius;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rift|Enemy")
+    float ExplosionFuseSeconds;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rift|Enemy")
+    TSubclassOf<ARiftProjectile> ProjectileClass;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rift|Enemy")
+    ERiftEnemyType EnemyType;
+
     UPROPERTY()
     TObjectPtr<ARiftRoomManager> OwningRoomManager;
 
     float LastAttackTime;
     float SpawnTime;
+    bool bExplosionTriggered;
 
     APawn* FindTargetPawn() const;
+    void TickChaser(APawn* TargetPawn, float Distance, FVector ToTarget);
+    void TickShooter(APawn* TargetPawn, float Distance, FVector ToTarget);
+    void TickBurster(APawn* TargetPawn, float Distance, FVector ToTarget);
     void TryAttack(APawn* TargetPawn);
+    void FireProjectileAt(APawn* TargetPawn);
+    void TriggerExplosion(APawn* TargetPawn);
+    void ExecuteExplosion();
+    void ApplyVisualForType();
 
     UFUNCTION()
     void HandleDeath(URiftHealthComponent* DeadHealthComponent, AActor* DamageInstigator);

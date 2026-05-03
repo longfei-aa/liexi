@@ -28,6 +28,9 @@ struct FRiftRoomWaveConfig
     int32 EnemyCount;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rift|Room")
+    TArray<ERiftEnemyType> EnemyTypes;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rift|Room")
     float EnemyHealth;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Rift|Room")

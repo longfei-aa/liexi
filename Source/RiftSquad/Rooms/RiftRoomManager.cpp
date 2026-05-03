@@ -30,6 +30,7 @@ ARiftRoomManager::ARiftRoomManager()
     RoomOne.EnemyMoveSpeed = 250.0f;
     RoomOne.EnemyAttackDamage = 3.0f;
     RoomOne.EnemyAttackCooldown = 2.0f;
+    RoomOne.EnemyTypes = {ERiftEnemyType::Chaser, ERiftEnemyType::Chaser};
     RoomWaves.Add(RoomOne);
 
     FRiftRoomWaveConfig RoomTwo;
@@ -37,6 +38,7 @@ ARiftRoomManager::ARiftRoomManager()
     RoomTwo.EnemyHealth = 70.0f;
     RoomTwo.EnemyMoveSpeed = 285.0f;
     RoomTwo.EnemyAttackDamage = 4.0f;
+    RoomTwo.EnemyTypes = {ERiftEnemyType::Chaser, ERiftEnemyType::Shooter, ERiftEnemyType::Chaser};
     RoomWaves.Add(RoomTwo);
 
     FRiftRoomWaveConfig RoomThree;
@@ -44,6 +46,7 @@ ARiftRoomManager::ARiftRoomManager()
     RoomThree.EnemyHealth = 85.0f;
     RoomThree.EnemyMoveSpeed = 310.0f;
     RoomThree.EnemyAttackDamage = 5.0f;
+    RoomThree.EnemyTypes = {ERiftEnemyType::Chaser, ERiftEnemyType::Shooter, ERiftEnemyType::Burster, ERiftEnemyType::Chaser};
     RoomWaves.Add(RoomThree);
 
     FRiftRoomWaveConfig EliteRoom;
@@ -52,6 +55,7 @@ ARiftRoomManager::ARiftRoomManager()
     EliteRoom.EnemyMoveSpeed = 330.0f;
     EliteRoom.EnemyAttackDamage = 7.0f;
     EliteRoom.EnemyVisualScale = FVector(0.7f, 0.7f, 1.0f);
+    EliteRoom.EnemyTypes = {ERiftEnemyType::Elite, ERiftEnemyType::Shooter};
     RoomWaves.Add(EliteRoom);
 
     FRiftRoomWaveConfig BossRoom;
@@ -62,6 +66,7 @@ ARiftRoomManager::ARiftRoomManager()
     BossRoom.EnemyAttackCooldown = 1.4f;
     BossRoom.EnemyVisualScale = FVector(1.35f, 1.35f, 1.8f);
     BossRoom.bBossRoom = true;
+    BossRoom.EnemyTypes = {ERiftEnemyType::Elite};
     RoomWaves.Add(BossRoom);
 }
 
@@ -228,14 +233,15 @@ void ARiftRoomManager::SpawnCurrentRoomWave()
     }
 
     const FRiftRoomWaveConfig& Wave = RoomWaves[CurrentRoomIndex - 1];
-    const int32 SpawnCount = FMath::Max(0, Wave.EnemyCount);
+    const int32 SpawnCount = FMath::Max(0, Wave.EnemyTypes.Num() > 0 ? Wave.EnemyTypes.Num() : Wave.EnemyCount);
     for (int32 SpawnIndex = 0; SpawnIndex < SpawnCount; ++SpawnIndex)
     {
         const FVector SpawnLocation = GetSpawnLocationForIndex(SpawnIndex);
         ARiftEnemyBase* Enemy = World->SpawnActor<ARiftEnemyBase>(EnemyClass, SpawnLocation, FRotator::ZeroRotator);
         if (Enemy)
         {
-            Enemy->ConfigureEnemy(Wave.EnemyHealth, Wave.EnemyMoveSpeed, Wave.EnemyAttackDamage, Wave.EnemyAttackCooldown, Wave.EnemyVisualScale);
+            const ERiftEnemyType EnemyType = Wave.EnemyTypes.IsValidIndex(SpawnIndex) ? Wave.EnemyTypes[SpawnIndex] : ERiftEnemyType::Chaser;
+            Enemy->ConfigureEnemy(EnemyType, Wave.EnemyHealth, Wave.EnemyMoveSpeed, Wave.EnemyAttackDamage, Wave.EnemyAttackCooldown, Wave.EnemyVisualScale);
             RegisterEnemy(Enemy);
         }
     }

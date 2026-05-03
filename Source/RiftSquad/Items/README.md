@@ -6,8 +6,9 @@ Owns item definitions, runtime inventory, stat modifiers, and reward choices.
 
 - `URiftItemDefinition`: DataAsset shape for future authored item assets.
 - `URiftItemInventoryComponent`: runtime inventory on the player character.
+- `URiftItemLibrary`: temporary C++ item library and reward-option generator.
 - `FRiftRewardOption`: lightweight replicated reward payload used by `GameState` and HUD.
-- `ARiftRoomManager`: currently owns the temporary in-code item pool until item assets are authored.
+- `ARiftRoomManager`: asks `URiftItemLibrary` for three reward options when a room is cleared.
 
 ## Built-In MVP Item Pool
 
@@ -28,4 +29,4 @@ The temporary pool contains 12 item definitions:
 
 ## Next Step
 
-Move the temporary in-code pool from `ARiftRoomManager::GenerateRewardOptions` to authored `URiftItemDefinition` assets or a DataTable under `Content/RiftSquad/Data`.
+Move the temporary C++ pool from `URiftItemLibrary::BuildDefaultItemPool` to authored `URiftItemDefinition` assets or a DataTable under `Content/RiftSquad/Data`.

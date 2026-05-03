@@ -1,4 +1,5 @@
 #include "Characters/RiftPlayerCharacter.h"
+#include "Abilities/RiftAbilityComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Combat/RiftHealthComponent.h"
 #include "Combat/RiftWeaponComponent.h"
@@ -32,6 +33,7 @@ ARiftPlayerCharacter::ARiftPlayerCharacter()
 
     HealthComponent = CreateDefaultSubobject<URiftHealthComponent>(TEXT("HealthComponent"));
     WeaponComponent = CreateDefaultSubobject<URiftWeaponComponent>(TEXT("WeaponComponent"));
+    AbilityComponent = CreateDefaultSubobject<URiftAbilityComponent>(TEXT("AbilityComponent"));
 
     VisualMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("VisualMesh"));
     VisualMesh->SetupAttachment(RootComponent);
@@ -99,6 +101,8 @@ void ARiftPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
     PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &ARiftPlayerCharacter::MoveForward);
     PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &ARiftPlayerCharacter::MoveRight);
     PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &ARiftPlayerCharacter::FireLegacy);
+    PlayerInputComponent->BindAction(TEXT("AbilityOne"), IE_Pressed, this, &ARiftPlayerCharacter::UseAbilityLegacy);
+    PlayerInputComponent->BindAction(TEXT("Dash"), IE_Pressed, this, &ARiftPlayerCharacter::DashLegacy);
 
     UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(PlayerInputComponent);
     if (!EnhancedInput)
@@ -194,6 +198,32 @@ void ARiftPlayerCharacter::FireLegacy()
     {
         WeaponComponent->RequestFire(GetActorLocation(), AimDirection);
     }
+}
+
+void ARiftPlayerCharacter::UseAbilityLegacy()
+{
+    if ((HealthComponent && HealthComponent->IsDead()) || !AbilityComponent)
+    {
+        return;
+    }
+
+    AbilityComponent->RequestShockwave(GetActorLocation());
+}
+
+void ARiftPlayerCharacter::DashLegacy()
+{
+    if ((HealthComponent && HealthComponent->IsDead()) || !AbilityComponent)
+    {
+        return;
+    }
+
+    FVector DashDirection = GetLastMovementInputVector().GetSafeNormal2D();
+    if (DashDirection.IsNearlyZero())
+    {
+        DashDirection = GetAimDirection();
+    }
+
+    AbilityComponent->RequestDash(DashDirection);
 }
 
 FVector ARiftPlayerCharacter::GetAimDirection() const

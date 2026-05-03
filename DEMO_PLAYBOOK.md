@@ -26,7 +26,9 @@ In Unreal Editor:
 3. Use `WASD` to move.
 4. Aim with the mouse.
 5. Fire with left mouse button.
-6. Choose rewards with `1`, `2`, or `3`.
+6. Use `Q` or right mouse button for shockwave.
+7. Use `Space` to dash.
+8. Choose rewards with `1`, `2`, or `3`.
 
 Use `Selected Viewport` or `New Editor Window`. Do not use `Simulate` for the demo.
 
@@ -37,6 +39,7 @@ Use `Selected Viewport` or `New Editor Window`. Do not use `Simulate` for the de
 - Player cylinder, enemy cones, projectile spheres.
 - Five-room combat route with final boss room.
 - Combat HUD with status, room progress, enemy count, HP, weapon stats, controls, objectives, rewards, victory, and defeat.
+- Assault-style active kit: basic fire, shockwave, and dash.
 - Server-authoritative reward selection path ready for later multiplayer testing.
 
 ## Current Placeholder Art

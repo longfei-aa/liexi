@@ -9,6 +9,7 @@ class UInputAction;
 class UInputMappingContext;
 class UStaticMeshComponent;
 class USpringArmComponent;
+class URiftAbilityComponent;
 class URiftHealthComponent;
 class URiftWeaponComponent;
 struct FInputActionValue;
@@ -30,6 +31,9 @@ public:
     UFUNCTION(BlueprintPure, Category = "Rift|Components")
     URiftWeaponComponent* GetWeaponComponent() const { return WeaponComponent; }
 
+    UFUNCTION(BlueprintPure, Category = "Rift|Components")
+    URiftAbilityComponent* GetAbilityComponent() const { return AbilityComponent; }
+
     UFUNCTION(BlueprintCallable, Category = "Rift|Stats")
     void MultiplyMoveSpeed(float Multiplier);
 
@@ -49,6 +53,9 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rift|Components")
     TObjectPtr<URiftWeaponComponent> WeaponComponent;
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rift|Components")
+    TObjectPtr<URiftAbilityComponent> AbilityComponent;
+
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rift|Visual")
     TObjectPtr<UStaticMeshComponent> VisualMesh;
 
@@ -66,6 +73,8 @@ protected:
     void MoveForward(float Value);
     void MoveRight(float Value);
     void FireLegacy();
+    void UseAbilityLegacy();
+    void DashLegacy();
     FVector GetAimDirection() const;
 
     UFUNCTION()

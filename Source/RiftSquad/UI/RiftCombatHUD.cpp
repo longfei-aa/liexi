@@ -1,5 +1,6 @@
 #include "UI/RiftCombatHUD.h"
 
+#include "Abilities/RiftAbilityComponent.h"
 #include "Combat/RiftHealthComponent.h"
 #include "Combat/RiftWeaponComponent.h"
 #include "Core/RiftGameState.h"
@@ -83,6 +84,7 @@ void ARiftCombatHUD::DrawHUD()
     const APawn* Pawn = GetOwningPawn();
     const URiftHealthComponent* HealthComponent = Pawn ? Pawn->FindComponentByClass<URiftHealthComponent>() : nullptr;
     const URiftWeaponComponent* WeaponComponent = Pawn ? Pawn->FindComponentByClass<URiftWeaponComponent>() : nullptr;
+    const URiftAbilityComponent* AbilityComponent = Pawn ? Pawn->FindComponentByClass<URiftAbilityComponent>() : nullptr;
 
     const ERiftRunPhase RunPhase = RiftGameState ? RiftGameState->GetCurrentRunPhase() : ERiftRunPhase::Setup;
     const FLinearColor Accent = PhaseColor(RunPhase);
@@ -112,30 +114,39 @@ void ARiftCombatHUD::DrawHUD()
         DrawText(TEXT("GameState unavailable"), FLinearColor::Red, Safe + 24.0f, Safe + 120.0f, SmallFont, 1.0f);
     }
 
-    DrawPanel(Safe, CanvasH - 156.0f, 520.0f, 118.0f, FLinearColor(0.015f, 0.023f, 0.035f, 0.82f), FLinearColor(0.22f, 0.36f, 0.48f, 1.0f));
-    DrawText(TEXT("OPERATIVE"), FLinearColor(0.72f, 0.84f, 0.92f, 1.0f), Safe + 22.0f, CanvasH - 136.0f, SmallFont, 1.0f);
+    DrawPanel(Safe, CanvasH - 186.0f, 620.0f, 158.0f, FLinearColor(0.015f, 0.023f, 0.035f, 0.82f), FLinearColor(0.22f, 0.36f, 0.48f, 1.0f));
+    DrawText(TEXT("OPERATIVE"), FLinearColor(0.72f, 0.84f, 0.92f, 1.0f), Safe + 22.0f, CanvasH - 166.0f, SmallFont, 1.0f);
 
     if (HealthComponent)
     {
         const float MaxHealth = FMath::Max(1.0f, HealthComponent->GetMaxHealth());
         const float HealthPercent = FMath::Clamp(HealthComponent->GetCurrentHealth() / MaxHealth, 0.0f, 1.0f);
         const FString HealthText = FString::Printf(TEXT("HP %.0f / %.0f"), HealthComponent->GetCurrentHealth(), MaxHealth);
-        DrawText(HealthText, FLinearColor::White, Safe + 22.0f, CanvasH - 108.0f, SmallFont, 1.0f);
-        DrawProgressBar(Safe + 132.0f, CanvasH - 102.0f, 350.0f, 15.0f, HealthPercent, FLinearColor(0.18f, 0.95f, 0.42f, 1.0f), FLinearColor(0.12f, 0.1f, 0.1f, 0.95f));
+        DrawText(HealthText, FLinearColor::White, Safe + 22.0f, CanvasH - 138.0f, SmallFont, 1.0f);
+        DrawProgressBar(Safe + 132.0f, CanvasH - 132.0f, 430.0f, 15.0f, HealthPercent, FLinearColor(0.18f, 0.95f, 0.42f, 1.0f), FLinearColor(0.12f, 0.1f, 0.1f, 0.95f));
     }
     else
     {
-        DrawText(TEXT("HP unavailable"), FLinearColor::Red, Safe + 22.0f, CanvasH - 108.0f, SmallFont, 1.0f);
+        DrawText(TEXT("HP unavailable"), FLinearColor::Red, Safe + 22.0f, CanvasH - 138.0f, SmallFont, 1.0f);
     }
 
     if (WeaponComponent)
     {
         const FString WeaponText = FString::Printf(TEXT("DMG %.0f     FIRE %.2fs"), WeaponComponent->GetDamage(), WeaponComponent->GetFireInterval());
-        DrawText(WeaponText, FLinearColor(0.78f, 0.92f, 1.0f, 1.0f), Safe + 22.0f, CanvasH - 75.0f, SmallFont, 1.0f);
+        DrawText(WeaponText, FLinearColor(0.78f, 0.92f, 1.0f, 1.0f), Safe + 22.0f, CanvasH - 105.0f, SmallFont, 1.0f);
     }
 
-    const FString ControlsText = TEXT("WASD move   Mouse aim   LMB fire   1/2/3 choose reward");
-    DrawText(ControlsText, FLinearColor(0.65f, 0.74f, 0.8f, 1.0f), Safe + 22.0f, CanvasH - 48.0f, SmallFont, 1.0f);
+    if (AbilityComponent)
+    {
+        const FString AbilityText = FString::Printf(
+            TEXT("Q SHOCK %.1fs     SPACE DASH %.1fs"),
+            AbilityComponent->GetShockwaveCooldownRemaining(),
+            AbilityComponent->GetDashCooldownRemaining());
+        DrawText(AbilityText, FLinearColor(1.0f, 0.82f, 0.36f, 1.0f), Safe + 22.0f, CanvasH - 78.0f, SmallFont, 1.0f);
+    }
+
+    const FString ControlsText = TEXT("WASD move   Mouse aim   LMB fire   RMB/Q shockwave   Space dash   1/2/3 reward");
+    DrawText(ControlsText, FLinearColor(0.65f, 0.74f, 0.8f, 1.0f), Safe + 22.0f, CanvasH - 49.0f, SmallFont, 0.9f);
 
     const FString Objective = ObjectiveText(RunPhase);
     const float ObjectiveW = 560.0f;

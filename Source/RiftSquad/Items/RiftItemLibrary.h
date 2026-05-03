@@ -13,6 +13,7 @@ class RIFTSQUAD_API URiftItemLibrary : public UObject
 public:
     static TArray<FRiftRewardOption> BuildDefaultItemPool();
     static TArray<FRiftRewardOption> GenerateRewardOptions(int32 RoomIndex, bool bEliteReward, int32 OptionCount);
+    static TArray<FRiftRewardOption> GenerateSupplyOptions(int32 RoomIndex, int32 OptionCount);
 
 protected:
     static ERiftItemRarity PickTargetRarity(int32 RoomIndex, bool bEliteReward, int32 OptionIndex);

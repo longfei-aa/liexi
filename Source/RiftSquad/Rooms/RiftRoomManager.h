@@ -129,6 +129,7 @@ protected:
     void SpawnCurrentRoomWave();
     FVector GetSpawnLocationForIndex(int32 SpawnIndex) const;
     void GenerateRewardOptions();
+    void GenerateSupplyOptions();
     void ApplyRewardToPlayer(ARiftPlayerController* PlayerController, const FRiftRewardOption& RewardOption);
     void UpdateGameState();
 };

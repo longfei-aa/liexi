@@ -20,6 +20,8 @@ namespace
                 return FLinearColor(1.0f, 0.28f, 0.18f, 1.0f);
             case ERiftRunPhase::Reward:
                 return FLinearColor(1.0f, 0.78f, 0.22f, 1.0f);
+            case ERiftRunPhase::Supply:
+                return FLinearColor(0.18f, 0.95f, 0.82f, 1.0f);
             case ERiftRunPhase::Victory:
                 return FLinearColor(0.18f, 1.0f, 0.45f, 1.0f);
             case ERiftRunPhase::Defeat:
@@ -39,6 +41,8 @@ namespace
                 return TEXT("COMBAT");
             case ERiftRunPhase::Reward:
                 return TEXT("REWARD");
+            case ERiftRunPhase::Supply:
+                return TEXT("SUPPLY");
             case ERiftRunPhase::Victory:
                 return TEXT("VICTORY");
             case ERiftRunPhase::Defeat:
@@ -56,6 +60,8 @@ namespace
                 return TEXT("Objective: eliminate all enemies in the room.");
             case ERiftRunPhase::Reward:
                 return TEXT("Objective: choose one upgrade to continue.");
+            case ERiftRunPhase::Supply:
+                return TEXT("Objective: choose one supply upgrade before the boss.");
             case ERiftRunPhase::Victory:
                 return TEXT("Objective complete: demo run cleared.");
             case ERiftRunPhase::Defeat:
@@ -166,7 +172,7 @@ void ARiftCombatHUD::DrawHUD()
         DrawText(InventoryComponent->GetRecentItemSummary(3), FLinearColor(0.8f, 0.9f, 1.0f, 1.0f), Safe + 22.0f, CanvasH - 56.0f, SmallFont, 0.9f);
     }
 
-    const FString ControlsText = TEXT("WASD move   Mouse aim   LMB fire   RMB/Q shockwave   Space dash   1/2/3 reward");
+    const FString ControlsText = TEXT("WASD move   Mouse aim   LMB fire   RMB/Q shockwave   Space dash   1/2/3 choose");
     DrawText(ControlsText, FLinearColor(0.65f, 0.74f, 0.8f, 1.0f), Safe + 22.0f, CanvasH - 32.0f, SmallFont, 0.9f);
 
     const FString Objective = ObjectiveText(RunPhase);
@@ -179,7 +185,7 @@ void ARiftCombatHUD::DrawHUD()
         DrawText(RiftGameState->GetLastRewardSummary(), FLinearColor(0.55f, 0.85f, 1.0f, 1.0f), Safe, Safe + 232.0f, SmallFont, 1.0f);
     }
 
-    if (RiftGameState && RunPhase == ERiftRunPhase::Reward)
+    if (RiftGameState && (RunPhase == ERiftRunPhase::Reward || RunPhase == ERiftRunPhase::Supply))
     {
         const TArray<FRiftRewardOption>& RewardOptions = RiftGameState->GetRewardOptions();
         const float CardW = 300.0f;
@@ -188,7 +194,8 @@ void ARiftCombatHUD::DrawHUD()
         const float StartX = CanvasW - Safe - CardW;
         float CardY = Safe + 96.0f;
 
-        DrawText(TEXT("CHOOSE UPGRADE"), Accent, StartX, CardY - 34.0f, MediumFont, 1.0f);
+        const FString ChoiceTitle = RunPhase == ERiftRunPhase::Supply ? TEXT("CHOOSE SUPPLY") : TEXT("CHOOSE UPGRADE");
+        DrawText(ChoiceTitle, Accent, StartX, CardY - 34.0f, MediumFont, 1.0f);
         for (int32 OptionIndex = 0; OptionIndex < RewardOptions.Num(); ++OptionIndex)
         {
             const FRiftRewardOption& Option = RewardOptions[OptionIndex];

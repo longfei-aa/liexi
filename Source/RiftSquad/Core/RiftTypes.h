@@ -11,6 +11,7 @@ enum class ERiftRoomPhase : uint8
     Intro,
     Combat,
     Reward,
+    Supply,
     ExitReady,
     Completed
 };
@@ -21,6 +22,7 @@ enum class ERiftRunPhase : uint8
     Setup,
     Combat,
     Reward,
+    Supply,
     Victory,
     Defeat
 };

@@ -10,8 +10,9 @@ Show a short, understandable combat loop:
 2. Move, aim, and shoot enemies.
 3. Clear a room.
 4. Choose one of three rewards with `1 / 2 / 3`.
-5. Continue through five rooms.
-6. Win after the boss room or lose if the squad is wiped.
+5. After the elite room, choose one supply upgrade before entering the boss.
+6. Continue through five combat rooms.
+7. Win after the boss room or lose if the squad is wiped.
 
 ## How To Run
 
@@ -29,6 +30,7 @@ In Unreal Editor:
 6. Use `Q` or right mouse button for shockwave.
 7. Use `Space` to dash.
 8. Choose rewards with `1`, `2`, or `3`.
+9. Choose the supply option after the elite room with `1`, `2`, or `3`.
 
 Use `Selected Viewport` or `New Editor Window`. Do not use `Simulate` for the demo.
 
@@ -38,6 +40,7 @@ Use `Selected Viewport` or `New Editor Window`. Do not use `Simulate` for the de
 - Runtime arena fallback with floor, walls, and lighting.
 - Player cylinder, enemy cones, projectile spheres.
 - Five-room combat route with final boss room.
+- Supply node after the elite room, using recovery/mobility/cooldown options before the boss.
 - Enemy variety: chaser, shooter, burster, and elite placeholder variants.
 - Combat HUD with status, room progress, enemy count, HP, weapon stats, controls, objectives, rewards, victory, and defeat.
 - Assault-style active kit: basic fire, shockwave, and dash.

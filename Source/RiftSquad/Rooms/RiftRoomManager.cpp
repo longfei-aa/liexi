@@ -7,6 +7,11 @@
 #include "Items/RiftItemLibrary.h"
 #include "Net/UnrealNetwork.h"
 
+namespace
+{
+    constexpr int32 SupplyAfterRoomIndex = 4;
+}
+
 ARiftRoomManager::ARiftRoomManager()
 {
     PrimaryActorTick.bCanEverTick = false;
@@ -191,6 +196,11 @@ void ARiftRoomManager::CompleteRoom()
     {
         RoomPhase = ERiftRoomPhase::Completed;
     }
+    else if (CurrentRoomIndex == SupplyAfterRoomIndex)
+    {
+        RoomPhase = ERiftRoomPhase::Supply;
+        GenerateSupplyOptions();
+    }
     else
     {
         RoomPhase = ERiftRoomPhase::Reward;
@@ -202,7 +212,8 @@ void ARiftRoomManager::CompleteRoom()
 
 void ARiftRoomManager::SelectRewardForPlayer(ARiftPlayerController* PlayerController, int32 OptionIndex)
 {
-    if (!HasAuthority() || RoomPhase != ERiftRoomPhase::Reward || !CurrentRewardOptions.IsValidIndex(OptionIndex))
+    const bool bCanSelectOption = RoomPhase == ERiftRoomPhase::Reward || RoomPhase == ERiftRoomPhase::Supply;
+    if (!HasAuthority() || !bCanSelectOption || !CurrentRewardOptions.IsValidIndex(OptionIndex))
     {
         return;
     }
@@ -216,7 +227,8 @@ void ARiftRoomManager::SelectRewardForPlayer(ARiftPlayerController* PlayerContro
 
 void ARiftRoomManager::AdvanceToNextRoom()
 {
-    if (!HasAuthority() || RoomPhase != ERiftRoomPhase::Reward)
+    const bool bCanAdvance = RoomPhase == ERiftRoomPhase::Reward || RoomPhase == ERiftRoomPhase::Supply;
+    if (!HasAuthority() || !bCanAdvance)
     {
         return;
     }
@@ -267,6 +279,12 @@ void ARiftRoomManager::GenerateRewardOptions()
     CurrentRewardOptions = URiftItemLibrary::GenerateRewardOptions(CurrentRoomIndex, bEliteReward, 3);
 }
 
+void ARiftRoomManager::GenerateSupplyOptions()
+{
+    CurrentRewardOptions.Empty();
+    CurrentRewardOptions = URiftItemLibrary::GenerateSupplyOptions(CurrentRoomIndex, 3);
+}
+
 void ARiftRoomManager::ApplyRewardToPlayer(ARiftPlayerController* PlayerController, const FRiftRewardOption& RewardOption)
 {
     ARiftPlayerCharacter* PlayerCharacter = PlayerController ? Cast<ARiftPlayerCharacter>(PlayerController->GetPawn()) : nullptr;
@@ -282,7 +300,8 @@ void ARiftRoomManager::ApplyRewardToPlayer(ARiftPlayerController* PlayerControll
 
     if (ARiftGameState* RiftGameState = GetWorld() ? GetWorld()->GetGameState<ARiftGameState>() : nullptr)
     {
-        const FString Summary = FString::Printf(TEXT("Selected: %s"), *RewardOption.Name);
+        const TCHAR* SelectionLabel = RoomPhase == ERiftRoomPhase::Supply ? TEXT("Supply selected") : TEXT("Selected");
+        const FString Summary = FString::Printf(TEXT("%s: %s"), SelectionLabel, *RewardOption.Name);
         RiftGameState->SetLastRewardSummary(Summary);
     }
 }
@@ -304,6 +323,9 @@ void ARiftRoomManager::UpdateGameState()
                 break;
             case ERiftRoomPhase::Reward:
                 RunPhase = ERiftRunPhase::Reward;
+                break;
+            case ERiftRoomPhase::Supply:
+                RunPhase = ERiftRunPhase::Supply;
                 break;
             case ERiftRoomPhase::Completed:
                 RunPhase = ERiftRunPhase::Victory;

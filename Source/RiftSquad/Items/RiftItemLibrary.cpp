@@ -63,6 +63,30 @@ TArray<FRiftRewardOption> URiftItemLibrary::GenerateRewardOptions(int32 RoomInde
     return Options;
 }
 
+TArray<FRiftRewardOption> URiftItemLibrary::GenerateSupplyOptions(int32 RoomIndex, int32 OptionCount)
+{
+    TArray<FRiftRewardOption> Pool = BuildDefaultItemPool();
+    Pool = Pool.FilterByPredicate([](const FRiftRewardOption& Option)
+    {
+        return Option.Type == ERiftRewardType::Heal ||
+            Option.Type == ERiftRewardType::MaxHealth ||
+            Option.Type == ERiftRewardType::SkillCooldown ||
+            Option.Type == ERiftRewardType::MoveSpeed;
+    });
+
+    TArray<FRiftRewardOption> Options;
+    const int32 RewardSeed = FMath::Max(1, RoomIndex);
+    const int32 SafeOptionCount = FMath::Max(1, OptionCount);
+    for (int32 OptionIndex = 0; OptionIndex < SafeOptionCount && Pool.Num() > 0; ++OptionIndex)
+    {
+        const int32 PoolIndex = (RewardSeed + OptionIndex * 2) % Pool.Num();
+        Options.Add(Pool[PoolIndex]);
+        Pool.RemoveAt(PoolIndex);
+    }
+
+    return Options;
+}
+
 ERiftItemRarity URiftItemLibrary::PickTargetRarity(int32 RoomIndex, bool bEliteReward, int32 OptionIndex)
 {
     const int32 Roll = (RoomIndex * 37 + OptionIndex * 23) % 100;

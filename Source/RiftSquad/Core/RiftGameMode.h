@@ -22,12 +22,8 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rift|Room")
     bool bSpawnInitialRoomManager;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rift|Debug")
-    bool bSpawnRuntimeVisualFallback;
-
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Rift|Room")
     TSubclassOf<ARiftRoomManager> RoomManagerClass;
 
-    void SpawnRuntimeVisualFallback();
     bool AreAllPlayersDead() const;
 };

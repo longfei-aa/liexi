@@ -63,4 +63,5 @@ protected:
     void SelectRewardThree();
 
     ERiftRunPhase GetCurrentRunPhase() const;
+    void SpawnRuntimeVisualFallbackLocal();
 };

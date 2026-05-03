@@ -18,3 +18,8 @@ Before adding Steam/EOS:
 1. Validate two-player PIE Listen Server.
 2. Confirm host and client can both move, fire, dash, shockwave, clear rooms, choose rewards, and see the same victory/defeat state.
 3. Only after this passes, add local session wrappers around `OnlineSubsystemNull`.
+
+## PIE Findings
+
+- Runtime greybox visuals must be available in every PIE world. `GameMode` exists only on the server, so visual-only fallback actors spawned there are not visible to clients.
+- Current fix: each local `ARiftPlayerController` spawns the greybox floor, walls, and lights for its own PIE world. The listen server still gets collision because its local controller runs in the server world.

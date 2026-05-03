@@ -11,6 +11,7 @@
 #include "Engine/PointLight.h"
 #include "Engine/SkyLight.h"
 #include "Engine/StaticMeshActor.h"
+#include "EngineUtils.h"
 #include "Rooms/RiftRoomManager.h"
 #include "UI/RiftCombatHUD.h"
 #include "UObject/ConstructorHelpers.h"
@@ -135,6 +136,15 @@ void ARiftGameMode::NotifyPlayerDied()
     {
         RiftGameState->SetCurrentRunPhase(ERiftRunPhase::Defeat);
         RiftGameState->SetLastRewardSummary(TEXT("Squad wiped"));
+    }
+
+    if (UWorld* World = GetWorld())
+    {
+        for (TActorIterator<ARiftRoomManager> It(World); It; ++It)
+        {
+            It->MarkRunDefeated();
+            return;
+        }
     }
 }
 

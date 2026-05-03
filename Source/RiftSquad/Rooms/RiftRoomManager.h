@@ -63,6 +63,9 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Rift|Room")
     void StartRun();
 
+    UFUNCTION(BlueprintCallable, Category = "Rift|Run")
+    void MarkRunDefeated();
+
     UFUNCTION(BlueprintCallable, Category = "Rift|Room")
     void StartRoom();
 
@@ -131,5 +134,6 @@ protected:
     void GenerateRewardOptions();
     void GenerateSupplyOptions();
     void ApplyRewardToPlayer(ARiftPlayerController* PlayerController, const FRiftRewardOption& RewardOption);
+    void ResetPlayersForRun();
     void UpdateGameState();
 };

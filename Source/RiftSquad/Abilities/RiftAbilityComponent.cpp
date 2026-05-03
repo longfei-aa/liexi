@@ -128,6 +128,23 @@ void URiftAbilityComponent::MultiplyShockwaveRadius(float Multiplier)
     ShockwaveRadius = FMath::Clamp(ShockwaveRadius * Multiplier, 120.0f, 900.0f);
 }
 
+void URiftAbilityComponent::ResetAbilityStats()
+{
+    AActor* Owner = GetOwner();
+    if (!Owner || !Owner->HasAuthority())
+    {
+        return;
+    }
+
+    ShockwaveDamage = 38.0f;
+    ShockwaveRadius = 320.0f;
+    ShockwaveCooldown = 5.0f;
+    DashDistance = 360.0f;
+    DashCooldown = 3.0f;
+    LastShockwaveTime = -1000.0f;
+    LastDashTime = -1000.0f;
+}
+
 void URiftAbilityComponent::ServerRequestShockwave_Implementation(FVector_NetQuantize Origin)
 {
     ExecuteShockwave(Origin);

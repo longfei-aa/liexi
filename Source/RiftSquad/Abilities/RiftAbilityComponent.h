@@ -37,6 +37,9 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Rift|Ability")
     void MultiplyShockwaveRadius(float Multiplier);
 
+    UFUNCTION(BlueprintCallable, Category = "Rift|Ability")
+    void ResetAbilityStats();
+
 protected:
     UPROPERTY(EditDefaultsOnly, Replicated, BlueprintReadOnly, Category = "Rift|Ability")
     float ShockwaveDamage;

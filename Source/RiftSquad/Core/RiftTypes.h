@@ -13,6 +13,7 @@ enum class ERiftRoomPhase : uint8
     Reward,
     Supply,
     ExitReady,
+    Failed,
     Completed
 };
 

@@ -44,6 +44,9 @@ public:
     UFUNCTION(BlueprintPure, Category = "Rift|Stats")
     float GetCurrentMoveSpeed() const;
 
+    UFUNCTION(BlueprintCallable, Category = "Rift|Run")
+    void ResetForNewRun(const FVector& SpawnLocation);
+
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rift|Camera")
     TObjectPtr<USpringArmComponent> CameraBoom;

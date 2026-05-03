@@ -138,6 +138,47 @@ float ARiftPlayerCharacter::GetCurrentMoveSpeed() const
     return GetCharacterMovement() ? GetCharacterMovement()->MaxWalkSpeed : 0.0f;
 }
 
+void ARiftPlayerCharacter::ResetForNewRun(const FVector& SpawnLocation)
+{
+    if (!HasAuthority())
+    {
+        return;
+    }
+
+    SetActorLocation(SpawnLocation, false, nullptr, ETeleportType::TeleportPhysics);
+    SetActorRotation(FRotator::ZeroRotator);
+    SetActorEnableCollision(true);
+
+    GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+    GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+
+    if (VisualMesh)
+    {
+        VisualMesh->SetRelativeLocation(FVector(0.0f, 0.0f, -40.0f));
+        VisualMesh->SetRelativeScale3D(FVector(0.6f, 0.6f, 1.0f));
+    }
+
+    if (WeaponComponent)
+    {
+        WeaponComponent->ResetWeaponStats();
+    }
+
+    if (AbilityComponent)
+    {
+        AbilityComponent->ResetAbilityStats();
+    }
+
+    if (ItemInventoryComponent)
+    {
+        ItemInventoryComponent->ResetInventory();
+    }
+
+    if (HealthComponent)
+    {
+        HealthComponent->SetMaxHealth(220.0f, true);
+    }
+}
+
 void ARiftPlayerCharacter::Move(const FInputActionValue& Value)
 {
     if (HealthComponent && HealthComponent->IsDead())

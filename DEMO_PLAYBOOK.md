@@ -14,6 +14,7 @@ Show a short, understandable combat loop:
 6. After the elite room, choose one supply upgrade before entering the boss.
 7. Continue through five combat rooms.
 8. Win after the boss room or lose if the squad is wiped.
+9. Press `Enter` on victory/defeat to replay the demo loop.
 
 ## How To Run
 
@@ -33,6 +34,7 @@ In Unreal Editor:
 8. Use `Space` to dash.
 9. Choose rewards with `1`, `2`, or `3`.
 10. Choose the supply option after the elite room with `1`, `2`, or `3`.
+11. Press `Enter` on victory/defeat to restart the run.
 
 Use `Selected Viewport` or `New Editor Window`. Do not use `Simulate` for the demo.
 
@@ -47,6 +49,7 @@ Use `Selected Viewport` or `New Editor Window`. Do not use `Simulate` for the de
 - Enemy variety: chaser, shooter, burster, and elite placeholder variants.
 - Placeholder combat feedback: enemies pulse on hit and flatten briefly on death.
 - Combat HUD with status, room progress, enemy count, HP, weapon stats, controls, objectives, rewards, victory, and defeat.
+- Replay loop from victory/defeat using `Enter`, resetting player health, movement, weapon, ability, and item state.
 - Assault-style active kit: basic fire, shockwave, and dash.
 - Server-authoritative reward selection path ready for later multiplayer testing.
 

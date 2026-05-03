@@ -39,6 +39,9 @@ public:
     UFUNCTION(BlueprintPure, Category = "Rift|Item")
     FString GetRecentItemSummary(int32 MaxItems = 3) const;
 
+    UFUNCTION(BlueprintCallable, Category = "Rift|Item")
+    void ResetInventory();
+
 protected:
     UPROPERTY(Replicated, BlueprintReadOnly, Category = "Rift|Item")
     TArray<FRiftCollectedItem> CollectedItems;

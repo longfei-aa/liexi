@@ -226,13 +226,13 @@ void ARiftCombatHUD::DrawHUD()
     {
         DrawPanel(CanvasW * 0.5f - 310.0f, CanvasH * 0.5f - 70.0f, 620.0f, 140.0f, FLinearColor(0.02f, 0.06f, 0.035f, 0.9f), Accent);
         DrawCenteredText(TEXT("VICTORY"), CanvasH * 0.5f - 42.0f, Accent, MediumFont, 2.0f);
-        DrawCenteredText(TEXT("Prototype run complete. Core loop is playable."), CanvasH * 0.5f + 18.0f, FLinearColor::White, SmallFont, 1.0f);
+        DrawCenteredText(TEXT("Prototype run complete. Press ENTER to replay."), CanvasH * 0.5f + 18.0f, FLinearColor::White, SmallFont, 1.0f);
     }
     else if (RunPhase == ERiftRunPhase::Defeat)
     {
         DrawPanel(CanvasW * 0.5f - 310.0f, CanvasH * 0.5f - 70.0f, 620.0f, 140.0f, FLinearColor(0.08f, 0.015f, 0.02f, 0.9f), Accent);
         DrawCenteredText(TEXT("DEFEAT"), CanvasH * 0.5f - 42.0f, Accent, MediumFont, 2.0f);
-        DrawCenteredText(TEXT("Squad wiped. Restart Play to try the current demo again."), CanvasH * 0.5f + 18.0f, FLinearColor::White, SmallFont, 1.0f);
+        DrawCenteredText(TEXT("Squad wiped. Press ENTER to retry."), CanvasH * 0.5f + 18.0f, FLinearColor::White, SmallFont, 1.0f);
     }
 }
 

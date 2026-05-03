@@ -106,6 +106,17 @@ FString URiftItemInventoryComponent::GetRecentItemSummary(int32 MaxItems) const
     return FString::Printf(TEXT("Items: %s"), *FString::Join(Names, TEXT(", ")));
 }
 
+void URiftItemInventoryComponent::ResetInventory()
+{
+    AActor* Owner = GetOwner();
+    if (!Owner || !Owner->HasAuthority())
+    {
+        return;
+    }
+
+    CollectedItems.Empty();
+}
+
 void URiftItemInventoryComponent::AddCollectedItem(const FRiftRewardOption& RewardOption)
 {
     FRiftCollectedItem CollectedItem;

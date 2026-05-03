@@ -105,7 +105,8 @@ void ARiftRoomManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 
 void ARiftRoomManager::StartRun()
 {
-    if (!HasAuthority() || (RoomPhase != ERiftRoomPhase::Idle && RoomPhase != ERiftRoomPhase::Completed))
+    if (!HasAuthority() ||
+        (RoomPhase != ERiftRoomPhase::Idle && RoomPhase != ERiftRoomPhase::Completed && RoomPhase != ERiftRoomPhase::Failed))
     {
         return;
     }
@@ -123,8 +124,31 @@ void ARiftRoomManager::StartRun()
     AliveEnemyCount = 0;
     CurrentRoomIndex = 0;
     RoomPhase = ERiftRoomPhase::Idle;
+    ResetPlayersForRun();
     UpdateGameState();
     StartRoom();
+}
+
+void ARiftRoomManager::MarkRunDefeated()
+{
+    if (!HasAuthority() || RoomPhase == ERiftRoomPhase::Failed || RoomPhase == ERiftRoomPhase::Completed)
+    {
+        return;
+    }
+
+    for (ARiftEnemyBase* Enemy : ActiveEnemies)
+    {
+        if (IsValid(Enemy))
+        {
+            Enemy->Destroy();
+        }
+    }
+
+    ActiveEnemies.Empty();
+    CurrentRewardOptions.Empty();
+    AliveEnemyCount = 0;
+    RoomPhase = ERiftRoomPhase::Failed;
+    UpdateGameState();
 }
 
 void ARiftRoomManager::StartRoom()
@@ -315,6 +339,30 @@ void ARiftRoomManager::ApplyRewardToPlayer(ARiftPlayerController* PlayerControll
     }
 }
 
+void ARiftRoomManager::ResetPlayersForRun()
+{
+    UWorld* World = GetWorld();
+    if (!World)
+    {
+        return;
+    }
+
+    int32 PlayerIndex = 0;
+    for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+    {
+        APlayerController* PlayerController = It->Get();
+        ARiftPlayerCharacter* PlayerCharacter = PlayerController ? Cast<ARiftPlayerCharacter>(PlayerController->GetPawn()) : nullptr;
+        if (!PlayerCharacter)
+        {
+            continue;
+        }
+
+        const FVector SpawnLocation = GetActorLocation() + FVector(0.0f, (PlayerIndex - 1) * 120.0f, 90.0f);
+        PlayerCharacter->ResetForNewRun(SpawnLocation);
+        PlayerIndex++;
+    }
+}
+
 void ARiftRoomManager::UpdateGameState()
 {
     if (ARiftGameState* RiftGameState = GetWorld() ? GetWorld()->GetGameState<ARiftGameState>() : nullptr)
@@ -338,6 +386,9 @@ void ARiftRoomManager::UpdateGameState()
                 break;
             case ERiftRoomPhase::Completed:
                 RunPhase = ERiftRunPhase::Victory;
+                break;
+            case ERiftRoomPhase::Failed:
+                RunPhase = ERiftRunPhase::Defeat;
                 break;
             default:
                 RunPhase = ERiftRunPhase::Setup;

@@ -25,6 +25,9 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Rift|Weapon")
     void MultiplyFireInterval(float Multiplier);
 
+    UFUNCTION(BlueprintCallable, Category = "Rift|Weapon")
+    void ResetWeaponStats();
+
     UFUNCTION(BlueprintPure, Category = "Rift|Weapon")
     float GetDamage() const { return Damage; }
 

@@ -68,6 +68,19 @@ void URiftWeaponComponent::MultiplyFireInterval(float Multiplier)
     FireInterval = FMath::Clamp(FireInterval * Multiplier, 0.08f, 2.0f);
 }
 
+void URiftWeaponComponent::ResetWeaponStats()
+{
+    AActor* Owner = GetOwner();
+    if (!Owner || !Owner->HasAuthority())
+    {
+        return;
+    }
+
+    Damage = 12.0f;
+    FireInterval = 0.35f;
+    LastFireTime = -1000.0f;
+}
+
 void URiftWeaponComponent::FireInternal(FVector Origin, FVector Direction)
 {
     UWorld* World = GetWorld();
